@@ -1,39 +1,27 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 // import reactLogo from './assets/react.svg';
 // import viteLogo from '/vite.svg';
 import './App.css';
+import axios from 'axios';
+
 
 function App() {
-  const [parolaChiave, setParolaChiave] = useState('');
-  const [response, setResponse] = useState(null);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    
-    const response = await fetch('http://localhost:5000/cercaLibro/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ parola_chiave: parolaChiave }),
-    });
+  const [libri, setLibri] = useState([]);
 
-    const data = await response.json();
-    setResponse(data);
+  const fetchAPI = async (parola_chiave) => {
+    const response = await axios.post("http://localhost:5000/cercaLibro/",{"parola_chiave":parola_chiave});
+    setLibri(response.data.response);
+    return
   };
-
+  useEffect(()=>{
+    fetchAPI("a")
+    console.log(libri)
+  },[])
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <input
-          name="parola_chiave"
-          type="text"
-          value={parolaChiave}
-          onChange={(e) => setParolaChiave(e.target.value)}
-        />
-        <input type="submit" value="Cerca Libro" />
-      </form>
-      {response && <pre>{JSON.stringify(response, null, 2)}</pre>}
+      <h1>Cerca Libri</h1>
+      
     </>
   );
 }

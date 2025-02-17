@@ -5,7 +5,7 @@ import json
 import db
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins="*")
 app.config["MYSQL_HOST"] = "138.41.20.102"
 app.config["MYSQL_PORT"] = 53306
 app.config["MYSQL_USER"] = "ospite"
@@ -33,7 +33,7 @@ def addLibro():
     response = {"response": "ok"}
     return jsonify(response)
 
-@app.route("/cercaLibro/", methods=["GET", "POST"])
+@app.route("/cercaLibro/", methods=["POST"])
 def cercaLibro():
     data = request.get_json()
     parola_chiave = data.get("parola_chiave", "")
