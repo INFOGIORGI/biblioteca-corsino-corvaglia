@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify
 from flask_mysqldb import MySQL
+from flask_cors import CORS
 import json
 import db
 
 app = Flask(__name__)
+CORS(app)
 app.config["MYSQL_HOST"] = "138.41.20.102"
 app.config["MYSQL_PORT"] = 53306
 app.config["MYSQL_USER"] = "ospite"
