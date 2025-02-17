@@ -45,7 +45,5 @@ def cercaLibro():
     response = {"response": libri}
     return jsonify(response)
 
-@app.route("/ordinaL")
-
 if __name__ == "__main__":
     app.run(debug=True)
