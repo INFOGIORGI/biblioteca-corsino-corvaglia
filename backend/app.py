@@ -33,27 +33,38 @@ def addLibro():
     response = {"response": "ok"}
     return jsonify(response)
 
-@app.route("/cercaLibro/", methods=["POST"])
-def cercaLibro():
+@app.route("/cercaLibri/", methods=["POST"])
+def cercaLibri():
     data = request.get_json()
     parola_chiave = data.get("parola_chiave", "")
 
     if not parola_chiave:
-        return jsonify({"error": "missing data"}), 400
+        response = {"error": "missing data"}
+        return jsonify(response)
 
     print("Search keyword:", parola_chiave)
-    # Assuming db.cercaLibro returns a list of tuples: (isbn, title, genre, id)
-    libri = db.cercaLibro(mysql, parola_chiave)
-    
-    # Define keys for each record
-    keys = ["isbn", "title", "genre", "id"]
-    
-    # Convert each tuple into a dictionary using zip
-    libri_list = [dict(zip(keys, libro)) for libro in libri]
-    
-    response = {"response": libri_list}
+    # Assuming db.cercaLibri returns a list of tuples: (isbn, title, genre, id)
+    libri = db.cercaLibri(mysql, parola_chiave)
+
+    response = db.toDict(libri)
     print("Response:", response)
     return jsonify(response)
 
-if __name__ == "__main__":
-    app.run(debug=True)
+@app.route("/ordinaLibro/",methods=["POST"])
+def ordinaLibro():
+    data = request.get_json()
+    attributo = data.get("attributo","")
+    ordinamento = data.get("ordinamento","")
+
+    if not all([ordinamento,attributo]):
+        response = {"error":"missing data"}
+        return jsonify(response)
+
+    libri = db.ordinaLibro(mysql, attributo, ordinamento)
+    
+    response = db.toDict(libri)
+    print(response)
+    return jsonify(response)
+
+
+app.run(debug=True)
