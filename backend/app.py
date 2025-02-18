@@ -39,12 +39,20 @@ def cercaLibro():
     parola_chiave = data.get("parola_chiave", "")
 
     if not parola_chiave:
-        response = {"response": "missing data"}
-        return jsonify(response)
+        return jsonify({"error": "missing data"}), 400
+
+    print("Search keyword:", parola_chiave)
+    # Assuming db.cercaLibro returns a list of tuples: (isbn, title, genre, id)
+    libri = db.cercaLibro(mysql, parola_chiave)
     
-    print(parola_chiave)
-    libri = db.cercaLibro(mysql,parola_chiave)
-    response = {"response": libri}
+    # Define keys for each record
+    keys = ["isbn", "title", "genre", "id"]
+    
+    # Convert each tuple into a dictionary using zip
+    libri_list = [dict(zip(keys, libro)) for libro in libri]
+    
+    response = {"response": libri_list}
+    print("Response:", response)
     return jsonify(response)
 
 if __name__ == "__main__":
