@@ -14,6 +14,7 @@ const postAPI = async (e, route, args) => {
 
 function App() {
   const [libri, setLibri] = useState([]);
+  const [libri_a, setLibri_a] = useState([]);
   const [keyword, setKeyword] = useState("");
   const [ordinamento, setOrdinamento] = useState("");
   const [attributo, setAttributo] = useState("");
@@ -22,7 +23,7 @@ function App() {
     e.preventDefault();
     const data = await postAPI(e, "/cercaLibro/", { "parola_chiave": keyword });
     console.log("response:", data);
-    setLibri(data);
+    setLibri_a(data);
   };
 
   const ordinaLibro = async (e) => {
@@ -47,7 +48,7 @@ function App() {
         <button type="submit">Submit</button>
       </form>
       <div>
-        {Array.isArray(libri) && libri.length > 0 ? (
+        {Array.isArray(libri_a) && libri_a.length > 0 ? (
           <table>
             <thead>
               <tr>
@@ -58,7 +59,7 @@ function App() {
               </tr>
             </thead>
             <tbody>
-              {libri.map((libro, index) => (
+              {libri_a.map((libro, index) => (
                 <tr key={index}>
                   <td>{libro.title}</td>
                   <td>{libro.isbn}</td>

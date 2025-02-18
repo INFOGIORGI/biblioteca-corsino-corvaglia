@@ -33,8 +33,8 @@ def addLibro():
     response = {"response": "ok"}
     return jsonify(response)
 
-@app.route("/cercaLibri/", methods=["POST"])
-def cercaLibri():
+@app.route("/cercaLibro/", methods=["POST"])
+def cercaLibro():
     data = request.get_json()
     parola_chiave = data.get("parola_chiave", "")
 
@@ -43,8 +43,8 @@ def cercaLibri():
         return jsonify(response)
 
     print("Search keyword:", parola_chiave)
-    # Assuming db.cercaLibri returns a list of tuples: (isbn, title, genre, id)
-    libri = db.cercaLibri(mysql, parola_chiave)
+    # Assuming db.cercaLibro returns a list of tuples: (isbn, title, genre, id)
+    libri = db.cercaLibro(mysql, parola_chiave)
 
     response = db.toDict(libri)
     print("Response:", response)
@@ -55,7 +55,8 @@ def ordinaLibro():
     data = request.get_json()
     attributo = data.get("attributo","")
     ordinamento = data.get("ordinamento","")
-
+    print(attributo)
+    print(ordinamento)
     if not all([ordinamento,attributo]):
         response = {"error":"missing data"}
         return jsonify(response)
@@ -63,7 +64,7 @@ def ordinaLibro():
     libri = db.ordinaLibro(mysql, attributo, ordinamento)
     
     response = db.toDict(libri)
-    print(response)
+    # print(response)
     return jsonify(response)
 
 

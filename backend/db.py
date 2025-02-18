@@ -19,7 +19,7 @@ def addLibro(mysql,ISBN,titolo,genere,autore,corridoio,scaffale,ripiano,stato):
         cursor.close()
         return 
 
-def cercaLibri(mysql, parola_chiave):
+def cercaLibro(mysql, parola_chiave):
     cursor = mysql.connection.cursor()
     query = '''SELECT * FROM LIBRO WHERE TITOLO LIKE %s UNION SELECT * FROM LIBRO WHERE ISBN LIKE %s '''
     cursor.execute(query, ("%" + parola_chiave + "%","%" + parola_chiave + "%"))
@@ -31,9 +31,8 @@ def cercaLibri(mysql, parola_chiave):
 
 def ordinaLibro(mysql, attributo, ordinamento):
     cursor = mysql.connection.cursor()
-
-    query = '''SELECT * FROM LIBRO ORDER BY %s %s'''
-    cursor.execute(query, (attributo, ordinamento))
+    query = '''SELECT * FROM LIBRO ORDER BY '''+attributo+" "+ordinamento
+    cursor.execute(query)
     dati = cursor.fetchall()
     cursor.close()
     print(dati)
