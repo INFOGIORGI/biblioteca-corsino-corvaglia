@@ -1,27 +1,16 @@
-DROP TABLE IF EXISTS COMITATO_DI_SCRITTURA;
 DROP TABLE IF EXISTS PRESTITI;
 DROP TABLE IF EXISTS TESSERA;
 DROP TABLE IF EXISTS UTENTE;
 DROP TABLE IF EXISTS CATALOGO;
 DROP TABLE IF EXISTS LIBRO;
-DROP TABLE IF EXISTS AUTORE;
 
 
-CREATE TABLE IF NOT EXISTS AUTORE(
-    IDAutore INT AUTO_INCREMENT,
-    nome VARCHAR(20) NOT NULL,
-    cognome VARCHAR(20) NOT NULL,
-    dataNascita DATE NOT NULL,
-    dataMorte DATE,
-    bio VARCHAR(255) NOT NULL,
-    PRIMARY KEY(IDAutore)
-);
 
 CREATE TABLE IF NOT EXISTS LIBRO(
     ISBN CHAR(13),
     titolo VARCHAR(50) NOT NULL,
     genere VARCHAR(20) NOT NULL,
-    autore INT,
+    autore VARCHAR(40) NOT NULL,
     PRIMARY KEY(ISBN),
     FOREIGN KEY(autore) REFERENCES AUTORE(IDAutore)
 );
@@ -75,13 +64,6 @@ CREATE TABLE IF NOT EXISTS TESSERA(
     FOREIGN KEY(cf) REFERENCES UTENTE(cf)
 );
 
-INSERT INTO AUTORE (nome, cognome, dataNascita, dataMorte, bio) VALUES 
-('Giovanni', 'Rossi', '1950-05-20', NULL, 'Bio di Giovanni Rossi.'),
-('Maria', 'Bianchi', '1965-11-10', '2006-05-04', 'Bio di Maria Bianchi.'),
-('Luca', 'Verdi', '1980-01-15', NULL, 'Bio di Luca Verdi.'),
-('Anna', 'Neri', '1975-07-05', '2023-03-17', 'Bio di Anna Neri.'),
-('Paolo', 'Gialli', '1990-02-25', NULL, 'Bio di Paolo Gialli.');
-
 INSERT INTO LIBRO (ISBN, titolo, genere, autore) VALUES 
 ('9781234567897', 'Il Grande Romanzo', 'Narrativa', 1), 
 ('9781234567898', 'Avventure Epiche', 'Fantasia', 2), 
@@ -116,11 +98,4 @@ INSERT INTO PRESTITI (IDLibro, cf, inizio, restituzione) VALUES
 (3, 'VRDLCA80A15H501K', '2025-02-03', '2025-02-10'), 
 (4, 'NRNAN75L50H501K', '2025-02-04', NULL), 
 (5, 'GLLPLO90B25H501K', '2025-02-05', NULL);
-
-INSERT INTO COMITATO_DI_SCRITTURA (ISBN, IDAutore) VALUES 
-('9781234567897', 1), 
-('9781234567898', 2), 
-('9781234567899', 3), 
-('9781234567900', 4), 
-('9781234567901', 5);
 

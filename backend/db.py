@@ -37,3 +37,6 @@ def ordinaLibro(mysql, attributo, ordinamento):
     cursor.close()
     print(dati)
     return dati
+
+
+# def registrazione(mysql, cf, nome, cognome, pw, dataN, tel, admin)
