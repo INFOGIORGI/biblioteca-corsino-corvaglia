@@ -45,19 +45,20 @@ CREATE TABLE CATALOGO(
 
 
 CREATE TABLE UTENTE(
+        Username varchar(20),
         Nome varchar(20) NOT NULL,
         Cognome varchar(20) NOT NULL,
-        Username varchar(20) NOT NULL,
-        Password varchar(20) NOT NULL,
+        Password varchar(200) NOT NULL,
         DataNascita date NOT NULL,
         Email varchar(50),
         Tipo varchar(20) NOT NULL,
+        firstLogin boolean NOT NULL,
         PRIMARY KEY(Username)
 );
 
 CREATE TABLE RIASSUNTO(
         ISBN char(13),
-        Username int,
+        Username varchar(20),
         Contenuto varchar(4096) NOT NULL,
         PRIMARY KEY(ISBN, Username),
         FOREIGN KEY(ISBN) REFERENCES LIBRO(ISBN),
@@ -66,7 +67,7 @@ CREATE TABLE RIASSUNTO(
 );
 
 CREATE TABLE PRESTITO(
-        Username int,
+        Username varchar(20),
         ID_C int,
         DataInizio date NOT NULL,
         DataRestituzione date,
@@ -74,3 +75,5 @@ CREATE TABLE PRESTITO(
         FOREIGN KEY(Username) REFERENCES UTENTE(Username),
         FOREIGN KEY(ID_C) REFERENCES CATALOGO(ID_C)
 );
+
+INSERT INTO UTENTE VALUES("admin", "Alberto", "Corvaglia", "scrypt:32768:8:1$ahaotWVFLUko04Xu$04a7e78c5a5c50fbd91201416edfd8fb0949f65303d3e935bf26b34a4ea42d3da8772c4a6b30c3b3f72e46af4b2a9258f3bb8a3440885922f58707a79ded3515", "2006-08-20", "albertocorvaglia@ittgiogi.edu.it", "admin", false)

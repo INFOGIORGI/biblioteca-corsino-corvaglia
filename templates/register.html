@@ -33,17 +33,17 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="/register_user" method="POST">
+                <form action="/register" method="POST">
                     <div class="modal-body">
-                        <!-- Name -->
+                        <!-- Nome -->
                         <div class="form-group">
-                            <label for="name" class="font-weight-bold">Nome</label>
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Inserisci il nome" required>
+                            <label for="nome" class="font-weight-bold">Nome</label>
+                            <input type="text" class="form-control" id="nome" name="nome" placeholder="Inserisci il nome" required>
                         </div>
-                        <!-- Surname -->
+                        <!-- cognome -->
                         <div class="form-group">
-                            <label for="surname" class="font-weight-bold">Cognome</label>
-                            <input type="text" class="form-control" id="surname" name="surname" placeholder="Inserisci il cognome" required>
+                            <label for="cognome" class="font-weight-bold">Cognome</label>
+                            <input type="text" class="form-control" id="cognome" name="cognome" placeholder="Inserisci il cognome" required>
                         </div>
                         <!-- Email -->
                         <div class="form-group">
@@ -52,8 +52,13 @@
                         </div>
                         <!-- Username -->
                         <div class="form-group">
-                            <label for="username" class="font-weight-bold">Email</label>
-                            <input type="username" class="form-control" id="username" name="email" placeholder="Inserisci l'email" required>
+                            <label for="username" class="font-weight-bold">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Inserisci l'username" required>
+                        </div>
+                        <!-- Data -->
+                        <div class="form-group">
+                            <label for="data" class="font-weight-bold">Data di nascita</label>
+                            <input type="data" class="form-control" id="data" name="data" placeholder="Inserisci la data" required>
                         </div>
                     </div>
                     <div class="modal-footer">

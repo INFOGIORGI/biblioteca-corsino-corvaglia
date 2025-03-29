@@ -4,64 +4,81 @@
 
 {% block content %}
 <div class="mt-5 text-center">
-    <h1>Benvenuto, {{ user_name }}!</h1>
-    <p class="lead">
+    {% if session["username"] %}
+    <h1 class="display-4" style="color: #81A1C1;">Benvenuto, <span style="color: #88C0D0;">{{ session["username"] }}</span>!</h1>
+    <p class="lead" style="color: #D8DEE9;">
         Siamo lieti di averti qui nella Biblioteca Digitale. Esplora e gestisci i tuoi contenuti.
     </p>
-</div>
 
-<!-- Content for Admin -->
-{% if user_type == 'admin' %}
-<div class="card my-4">
-    <div class="card-header">
-        Funzionalità Admin
+    <!-- Content for Admin -->
+    {% if session["userType"] == 'admin' %}
+    <div class="card shadow-lg mx-auto my-4 border-0" style="max-width: 800px; background-color: #4C566A; color: #ECEFF4;">
+        <div class="card-header text-center" style="background-color: #5E81AC; color: #ECEFF4;">
+            <h4 class="font-weight-bold">Funzionalità Admin</h4>
+        </div>
+        <div class="card-body">
+            <ul style="list-style-type: none; padding-left: 0;">
+                <li>• Registra gli utenti bibliotecari</li>
+                <li>• Consulta le statistiche avanzate del database</li>
+                <li>• Gestisci i permessi utente</li>
+            </ul>
+            <div class="text-center">
+                <a href="/admin" class="btn btn-primary" style="background-color: #81A1C1; border-color: #81A1C1;">Vai al Pannello Admin</a>
+            </div>
+        </div>
     </div>
-    <div class="card-body">
-        <ul>
-            <li>Registra gli utenti bibliotecari</li>
-            <li>Consulta le statistiche avanzate del database</li>
-            <li>Gestisci i permessi utente</li>
-        </ul>
-        <a href="/admin" class="btn btn-primary">Vai al Pannello Admin</a>
-    </div>
-</div>
 
-<!-- Content for Bibliotecario -->
-{% elif user_type == 'bibliotecario' %}
-<div class="card my-4">
-    <div class="card-header">
-        Funzionalità Bibliotecario
+    <!-- Content for Bibliotecario -->
+    {% elif session["userType"] == 'bibliotecario' %}
+    <div class="card shadow-lg mx-auto my-4 border-0" style="max-width: 800px; background-color: #4C566A; color: #ECEFF4;">
+        <div class="card-header text-center" style="background-color: #5E81AC; color: #ECEFF4;">
+            <h4 class="font-weight-bold">Funzionalità Bibliotecario</h4>
+        </div>
+        <div class="card-body">
+            <ul style="list-style-type: none; padding-left: 0;">
+                <li>• Gestisci il catalogo dei libri</li>
+                <li>• Inserisci e modifica prestiti</li>
+                <li>• Consulta le statistiche</li>
+            </ul>
+            <div class="text-center">
+                <a href="/bibliotecario" class="btn btn-primary" style="background-color: #81A1C1; border-color: #81A1C1;">Gestisci Libri</a>
+            </div>
+        </div>
     </div>
-    <div class="card-body">
-        <ul>
-            <li>Gestisci il catalogo dei libri</li>
-            <li>Inserisci e modifica prestiti</li>
-            <li>Consulta le statistiche</li>
-        </ul>
-        <a href="/bibliotecario" class="btn btn-primary">Gestisci Libri</a>
-    </div>
-</div>
 
-<!-- Content for Utente Semplice -->
-{% elif user_type == 'utente' %}
-<div class="card my-4">
-    <div class="card-header">
-        Funzionalità Utente
+    <!-- Content for Utente Semplice -->
+    {% elif session["userType"] == 'utente' %}
+    <div class="card shadow-lg mx-auto my-4 border-0" style="max-width: 800px; background-color: #4C566A; color: #ECEFF4;">
+        <div class="card-header text-center" style="background-color: #5E81AC; color: #ECEFF4;">
+            <h4 class="font-weight-bold">Funzionalità Utente</h4>
+        </div>
+        <div class="card-body">
+            <ul style="list-style-type: none; padding-left: 0;">
+                <li>• Consulta il catalogo dei libri</li>
+                <li>• Visualizza lo storico dei prestiti</li>
+                <li>• Scrivi un riassunto dei libri letti</li>
+            </ul>
+            <div class="text-center">
+                <a href="/catalogo" class="btn btn-primary" style="background-color: #81A1C1; border-color: #81A1C1;">Consulta Catalogo</a>
+            </div>
+        </div>
     </div>
-    <div class="card-body">
-        <ul>
-            <li>Consulta il catalogo dei libri</li>
-            <li>Visualizza lo storico dei prestiti</li>
-            <li>Scrivi un riassunto dei libri letti</li>
-        </ul>
-        <a href="/catalogo" class="btn btn-primary">Consulta Catalogo</a>
-    </div>
-</div>
 
-<!-- Content for Unknown/Other Roles -->
-{% else %}
-<div class="alert alert-warning mt-4">
-    Il tuo ruolo non è stato riconosciuto. Contatta l'amministratore.
+    <!-- Content for Unknown/Other Roles -->
+    {% else %}
+    <div class="alert alert-warning text-center mx-auto" style="max-width: 800px; background-color: #3B4252; color: #ECEFF4; border-color: #5E81AC;">
+        Il tuo ruolo non è stato riconosciuto. Contatta l'amministratore.
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- Content for Not Logged In Users -->
+    <div class="text-center">
+        <h1 class="display-4" style="color: #81A1C1;">Benvenuto!</h1>
+        <p class="lead" style="color: #D8DEE9;">
+            Accedi alla Biblioteca Digitale per esplorare libri, prestiti e funzionalità personalizzate.
+        </p>
+    </div>
+    {% endif %}
 </div>
-{% endif %}
 {% endblock %}

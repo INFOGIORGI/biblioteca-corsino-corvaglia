@@ -1,7 +1,8 @@
-from flask import Flask, render_template,request , redirect, url_for, session, flash
+from flask import Flask, render_template,request , redirect, url_for, session, flash, abort
 from flask_mysqldb import MySQL
 from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 from db import *
 app = Flask(__name__)
 
@@ -20,14 +21,8 @@ app.config["SESSION_TYPE"] = "filesystem"     # Store session data in files
 
 Session(app)
 
-#password dell'admin sicurissima
-admin_pass = generate_password_hash("admin")
-print(admin_pass)
-
 @app.route("/")
 def home():
-    if not session.get("name"):
-        return redirect(url_for("login"))
     return render_template("home.html", titolo ="Home")
 
 @app.route("/login/", methods = ["GET", "POST"])
@@ -43,24 +38,57 @@ def login():
             flash("Tutti i campi devono essere completi")
             return redirect(url_for("login"))
 
-        account = getCredenziali(mysql,user, pw)
+        account = getCredenziali(mysql,user)
         if account == None:
             flash("L'account non esiste")
             return redirect(url_for("login"))
         
         else: 
-            hash = account[0][3]
+            hash = account[3]
+            print(hash,pw,account)
             if check_password_hash(hash, pw) == False:
                 flash("La password inserita non è corretta")
                 return redirect(url_for("login"))
-
         session["username"] = user
-        session["userType"] = account[0][6]
+        session["userType"] = account[6]
+        print(session)
         return redirect(url_for("home"))
+    
 
-@app.route("/bibliotecario/")
-def bibliotecario():
-    return render_template("bibliotecario.html")      
+@app.route("/register/", methods = ["GET","POST"])
+def register():
+    if request.method == "GET":
+        if session["userType"] == "utente":  
+            abort(403)
+        else: 
+            return render_template("register.html")
+    else:
+        nome = request.form.get("nome")
+        cognome = request.form.get("cognome")
+        user = request.form.get("username")
+        data = request.form.get("data")
+        email = request.form.get("email")
+        if session["userType"] == "admin":  
+             tipo = "bibliotecario"
+        elif session["userType"] == "bibliotecario":
+            tipo = "utente"
+       
+
+        if(user == "" or nome =="" or cognome == "" or data == "" or email ==""):
+            flash("Tutti i campi devono essere completi")
+            return redirect(url_for("register"))
+        
+        check = getCredenziali(mysql, user)
+        if check != None:
+            flash("L'username è già utilizzato")
+            return redirect(url_for("register"))
+        str = nome + data + cognome #formata da nome, data di nascita, cognome (es. Alberto2006-08-20Corvaglia)
+        pw = generate_password_hash(str)
+        
+        doRegister(mysql, nome, cognome, user,pw, data, email, tipo)
+
+        return redirect(url_for("home"))
+   
 
 @app.route("/admin/")
 def admin():
@@ -72,9 +100,8 @@ def catalogo():
 
 @app.route("/logout/")
 def logout():
+    session.clear()
     return redirect(url_for("login"))        
-
-            
 
 
 app.run(debug=True)

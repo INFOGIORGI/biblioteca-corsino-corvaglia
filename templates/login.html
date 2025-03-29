@@ -10,6 +10,18 @@
         <p class="lead" style="color: #D8DEE9;">Inserisci le tue credenziali per accedere alla Biblioteca Digitale.</p>
     </div>
 
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-warning alert-dismissible fade show mx-auto" style="max-width: 400px;" role="alert">
+        {{ messages[0] }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+    {% endwith %}
+
     <!-- Login Card -->
     <div class="card shadow-lg mx-auto" style="max-width: 400px; border:0; background-color: #4C566A; color: #ECEFF4;">
         <div class="card-body">
