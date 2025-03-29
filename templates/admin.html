@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Pannello Admin{% endblock %}
+
+{% block content %}
+<div class="mt-5">
+    <!-- Header Section -->
+    <div class="text-center mb-5">
+        <h1 class="display-4" style="color: #81A1C1;">Benvenuto Admin</h1>
+        <p class="lead" style="color: #D8DEE9;">Gestisci i bibliotecari e accedi alle statistiche del sistema.</p>
+    </div>
+
+    <!-- Add Bibliotecario Button -->
+    <div class="text-center">
+        <button class="btn btn-primary" style="background-color: #5E81AC;" data-toggle="modal" data-target="#addBibliotecarioModal">
+            Aggiungi Bibliotecario
+        </button>
+    </div>
+
+    <!-- Add Bibliotecario Modal -->
+    <div class="modal fade" id="addBibliotecarioModal" tabindex="-1" role="dialog" aria-labelledby="addBibliotecarioModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="background-color: #4C566A; color: #ECEFF4;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addBibliotecarioModalLabel">Aggiungi Nuovo Bibliotecario</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="/register_bibliotecario" method="POST">
+                    <div class="modal-body">
+                        <!-- Name -->
+                        <div class="form-group">
+                            <label for="name" class="font-weight-bold">Nome</label>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Inserisci il nome" required>
+                        </div>
+                        <!-- Surname -->
+                        <div class="form-group">
+                            <label for="surname" class="font-weight-bold">Cognome</label>
+                            <input type="text" class="form-control" id="surname" name="surname" placeholder="Inserisci il cognome" required>
+                        </div>
+                        <!-- Email -->
+                        <div class="form-group">
+                            <label for="email" class="font-weight-bold">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Inserisci l'email" required>
+                        </div>
+                        <!-- Password -->
+                        <div class="form-group">
+                            <label for="password" class="font-weight-bold">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Crea una password" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
+                        <button type="submit" class="btn btn-primary">Registra Bibliotecario</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

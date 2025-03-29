@@ -6,15 +6,26 @@
     <title>{% block title %}Biblioteca Digitale{% endblock %}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <style>
+        html, body {
+            height: 100%;
+        }
         body {
+            display: flex;
+            flex-direction: column;
             background-color: #2E3440; /* Nord Polar Night */
-            color: #D8DEE9; /* Nord Snow Storm */
+            color: #ECEFF4; /* Nord Snow Storm */
+        }
+        .content {
+            flex: 1;
         }
         .navbar, .footer {
             background-color: #3B4252; /* Nord Darker Polar Night */
         }
         .navbar-brand, .nav-link, .footer-text {
-            color: #D8DEE9; /* Nord Snow Storm */
+            color: #ECEFF4; /* Nord Snow Storm */
+        }
+        .navbar-brand:hover, .nav-link:hover {
+            color: #81A1C1; /* Nord Frost */
         }
         .btn-primary {
             background-color: #5E81AC; /* Nord Frost */
@@ -24,9 +35,12 @@
             background-color: #81A1C1;
             border-color: #81A1C1;
         }
+        .footer {
+            padding: 1rem 0;
+        }
         .modal-content {
             background-color: #4C566A; /* Nord Dark Grey */
-            color: #D8DEE9;
+            color: #ECEFF4;
         }
     </style>
 </head>
@@ -39,26 +53,27 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="/home">Home</a>
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login/">Login</a>
+                    </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/catalogo/">Catalogo</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/catalogo">Catalogo</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/login">Login</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/register">Register</a>
+                    <a class="nav-link" href="/logout/">Logout</a>
                 </li>
             </ul>
         </div>
     </nav>
 
-    <div class="container mt-4">
+    <div class="content container mt-4">
         {% block content %}{% endblock %}
     </div>
 
-    <footer class="footer mt-auto py-3">
+    <footer class="footer">
         <div class="container text-center">
             <span class="footer-text">© 2025 Biblioteca Digitale</span>
         </div>

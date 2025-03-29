@@ -11,7 +11,7 @@
 </div>
 
 <!-- Content for Admin -->
-{% if user_type == 'Admin' %}
+{% if user_type == 'admin' %}
 <div class="card my-4">
     <div class="card-header">
         Funzionalità Admin
@@ -22,12 +22,12 @@
             <li>Consulta le statistiche avanzate del database</li>
             <li>Gestisci i permessi utente</li>
         </ul>
-        <a href="/admin_dashboard" class="btn btn-primary">Vai al Pannello Admin</a>
+        <a href="/admin" class="btn btn-primary">Vai al Pannello Admin</a>
     </div>
 </div>
 
 <!-- Content for Bibliotecario -->
-{% elif user_type == 'Bibliotecario' %}
+{% elif user_type == 'bibliotecario' %}
 <div class="card my-4">
     <div class="card-header">
         Funzionalità Bibliotecario
@@ -38,12 +38,12 @@
             <li>Inserisci e modifica prestiti</li>
             <li>Consulta le statistiche</li>
         </ul>
-        <a href="/manage_books" class="btn btn-primary">Gestisci Libri</a>
+        <a href="/bibliotecario" class="btn btn-primary">Gestisci Libri</a>
     </div>
 </div>
 
 <!-- Content for Utente Semplice -->
-{% elif user_type == 'Utente Semplice' %}
+{% elif user_type == 'utente' %}
 <div class="card my-4">
     <div class="card-header">
         Funzionalità Utente
@@ -54,7 +54,7 @@
             <li>Visualizza lo storico dei prestiti</li>
             <li>Scrivi un riassunto dei libri letti</li>
         </ul>
-        <a href="/catalog" class="btn btn-primary">Consulta Catalogo</a>
+        <a href="/catalogo" class="btn btn-primary">Consulta Catalogo</a>
     </div>
 </div>
 

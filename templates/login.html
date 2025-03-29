@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="mt-5">
+    <!-- Login Header -->
+    <div class="text-center mb-5">
+        <h1 class="display-4" style="color: #81A1C1;">Accesso Utente</h1>
+        <p class="lead" style="color: #D8DEE9;">Inserisci le tue credenziali per accedere alla Biblioteca Digitale.</p>
+    </div>
+
+    <!-- Login Card -->
+    <div class="card shadow-lg mx-auto" style="max-width: 400px; border:0; background-color: #4C566A; color: #ECEFF4;">
+        <div class="card-body">
+            <form action="/login/" method="POST">
+                <!-- Username -->
+                <div class="form-group">
+                    <label for="username" class="font-weight-bold">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Inserisci lo username" style="background-color: #3B4252; color: #ECEFF4;" required>
+                </div>
+                <!-- Password -->
+                <div class="form-group">
+                    <label for="password" class="font-weight-bold">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Inserisci la password" style="background-color: #3B4252; color: #ECEFF4;" required>
+                </div>
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary btn-block" style="background-color: #5E81AC; border-color: #5E81AC;">Accedi</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
