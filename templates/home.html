@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="mt-5 text-center">
+    <h1>Benvenuto, {{ user_name }}!</h1>
+    <p class="lead">
+        Siamo lieti di averti qui nella Biblioteca Digitale. Esplora e gestisci i tuoi contenuti.
+    </p>
+</div>
+
+<!-- Content for Admin -->
+{% if user_type == 'Admin' %}
+<div class="card my-4">
+    <div class="card-header">
+        Funzionalità Admin
+    </div>
+    <div class="card-body">
+        <ul>
+            <li>Registra gli utenti bibliotecari</li>
+            <li>Consulta le statistiche avanzate del database</li>
+            <li>Gestisci i permessi utente</li>
+        </ul>
+        <a href="/admin_dashboard" class="btn btn-primary">Vai al Pannello Admin</a>
+    </div>
+</div>
+
+<!-- Content for Bibliotecario -->
+{% elif user_type == 'Bibliotecario' %}
+<div class="card my-4">
+    <div class="card-header">
+        Funzionalità Bibliotecario
+    </div>
+    <div class="card-body">
+        <ul>
+            <li>Gestisci il catalogo dei libri</li>
+            <li>Inserisci e modifica prestiti</li>
+            <li>Consulta le statistiche</li>
+        </ul>
+        <a href="/manage_books" class="btn btn-primary">Gestisci Libri</a>
+    </div>
+</div>
+
+<!-- Content for Utente Semplice -->
+{% elif user_type == 'Utente Semplice' %}
+<div class="card my-4">
+    <div class="card-header">
+        Funzionalità Utente
+    </div>
+    <div class="card-body">
+        <ul>
+            <li>Consulta il catalogo dei libri</li>
+            <li>Visualizza lo storico dei prestiti</li>
+            <li>Scrivi un riassunto dei libri letti</li>
+        </ul>
+        <a href="/catalog" class="btn btn-primary">Consulta Catalogo</a>
+    </div>
+</div>
+
+<!-- Content for Unknown/Other Roles -->
+{% else %}
+<div class="alert alert-warning mt-4">
+    Il tuo ruolo non è stato riconosciuto. Contatta l'amministratore.
+</div>
+{% endif %}
+{% endblock %}
