@@ -9,6 +9,51 @@
     <p class="lead" style="color: #D8DEE9;">
         Siamo lieti di averti qui nella Biblioteca Digitale. Esplora e gestisci i tuoi contenuti.
     </p>
+    {% if session["isFirstLogin"] %}
+    <!-- Password Change Modal -->
+    <div class="modal fade" id="passwordChangeModal" tabindex="-1" role="dialog" aria-labelledby="passwordChangeModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="background-color: #4C566A; color: #ECEFF4;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="passwordChangeModalLabel">Cambia Password</h5>
+                </div>
+                <form action="/password-update/" method="POST" id="passwordForm">
+                    <div class="modal-body">
+                        <!-- New Password -->
+                        <div class="form-group">
+                            <label for="password" class="font-weight-bold">Nuova Password</label>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Inserisci la nuova password" required>
+                        </div>
+                        <!-- Confirm Password -->
+                        <div class="form-group">
+                            <label for="confirm" class="font-weight-bold">Conferma Password</label>
+                            <input type="password" class="form-control" id="confirm" name="confirm" placeholder="Conferma la nuova password" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" id="submitButton">Aggiorna la Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script to Auto-Trigger the Modal -->
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+    var modalElement = document.getElementById("passwordChangeModal");
+    var bootstrapModal = new bootstrap.Modal(modalElement, { backdrop: 'static', keyboard: false });
+    bootstrapModal.show();
+
+    document.getElementById("passwordForm").addEventListener("submit", function() {
+        bootstrapModal.hide(); // Close modal after submission
+    });
+});
+
+</script>
+
+    {% endif %}
+    
 
     <!-- Content for Admin -->
     {% if session["userType"] == 'admin' %}
@@ -38,10 +83,10 @@
             <ul style="list-style-type: none; padding-left: 0;">
                 <li>• Gestisci il catalogo dei libri</li>
                 <li>• Inserisci e modifica prestiti</li>
-                <li>• Consulta le statistiche</li>
+                <li>• Consulta le statistiche della biblioteca</li>
             </ul>
             <div class="text-center">
-                <a href="/bibliotecario" class="btn btn-primary" style="background-color: #81A1C1; border-color: #81A1C1;">Gestisci Libri</a>
+                <a href="/bibliotecario" class="btn btn-primary" style="background-color: #81A1C1; border-color: #81A1C1;">Vai al pannello del bibliotecario</a>
             </div>
         </div>
     </div>
@@ -56,7 +101,7 @@
             <ul style="list-style-type: none; padding-left: 0;">
                 <li>• Consulta il catalogo dei libri</li>
                 <li>• Visualizza lo storico dei prestiti</li>
-                <li>• Scrivi un riassunto dei libri letti</li>
+                <li>• Scrive il riassunto dei libri letti</li>
             </ul>
             <div class="text-center">
                 <a href="/catalogo" class="btn btn-primary" style="background-color: #81A1C1; border-color: #81A1C1;">Consulta Catalogo</a>

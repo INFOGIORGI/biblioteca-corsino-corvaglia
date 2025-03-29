@@ -1,132 +1,41 @@
-{% extends "base.html" %}
-
-{% block title %}Pannello Bibliotecario{% endblock %}
-
-{% block content %}
-<div class="mt-5">
-    <!-- Header Section -->
-    <div class="text-center mb-5">
-        <h1 class="display-4" style="color: #81A1C1;">Benvenuto, <span style="color: #88C0D0;">{{ user_name }}</span></h1>
-        <p class="lead" style="color: #D8DEE9;">Gestisci utenti, libri e prestiti con facilità e precisione.</p>
-    </div>
-
-    <!-- Add User and Prestito Buttons -->
-    <div class="text-center">
-        <button class="btn btn-primary" style="background-color: #5E81AC;" data-toggle="modal" data-target="#addUserModal">
-            Aggiungi Utente
-        </button>
-        <button class="btn btn-secondary" style="background-color: #81A1C1;" data-toggle="modal" data-target="#addPrestitoModal">
-            Aggiungi Prestito
-        </button>
-        <button class="btn btn-success" style="background-color: #A3BE8C;" data-toggle="modal" data-target="#modificaPrestitoModal">
-            Modifica Prestito
-        </button>
-    </div>
-
-    <!-- Add User Modal -->
-    <div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content" style="background-color: #4C566A; color: #ECEFF4;">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addUserModalLabel">Aggiungi Nuovo Utente</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form action="/register" method="POST">
-                    <div class="modal-body">
-                        <!-- Nome -->
-                        <div class="form-group">
-                            <label for="nome" class="font-weight-bold">Nome</label>
-                            <input type="text" class="form-control" id="nome" name="nome" placeholder="Inserisci il nome" required>
-                        </div>
-                        <!-- cognome -->
-                        <div class="form-group">
-                            <label for="cognome" class="font-weight-bold">Cognome</label>
-                            <input type="text" class="form-control" id="cognome" name="cognome" placeholder="Inserisci il cognome" required>
-                        </div>
-                        <!-- Email -->
-                        <div class="form-group">
-                            <label for="email" class="font-weight-bold">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Inserisci l'email" required>
-                        </div>
-                        <!-- Username -->
-                        <div class="form-group">
-                            <label for="username" class="font-weight-bold">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" placeholder="Inserisci l'username" required>
-                        </div>
-                        <!-- Data -->
-                        <div class="form-group">
-                            <label for="data" class="font-weight-bold">Data di nascita</label>
-                            <input type="data" class="form-control" id="data" name="data" placeholder="Inserisci la data" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
-                        <button type="submit" class="btn btn-primary">Registra Utente</button>
-                    </div>
-                </form>
+<!-- Add User Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="background-color: #4C566A; color: #ECEFF4;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addUserModalLabel">Aggiungi Nuovo Utente</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-        </div>
-    </div>
-
-    <!-- Add Prestito Modal -->
-    <div class="modal fade" id="addPrestitoModal" tabindex="-1" role="dialog" aria-labelledby="addPrestitoModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content" style="background-color: #4C566A; color: #ECEFF4;">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addPrestitoModalLabel">Aggiungi Prestito</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+            <form action="/register/" method="POST">
+                <div class="modal-body">
+                    <!-- Nome -->
+                    <div class="form-group">
+                        <label for="nome" class="font-weight-bold">Nome</label>
+                        <input type="text" class="form-control" id="nome" name="nome" placeholder="Inserisci il nome" required>
+                    </div>
+                    <!-- Cognome -->
+                    <div class="form-group">
+                        <label for="cognome" class="font-weight-bold">Cognome</label>
+                        <input type="text" class="form-control" id="cognome" name="cognome" placeholder="Inserisci il cognome" required>
+                    </div>
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="email" class="font-weight-bold">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Inserisci l'email" required>
+                    </div>
+                    <!-- Data -->
+                    <div class="form-group">
+                        <label for="data" class="font-weight-bold">Data di nascita</label>
+                        <input type="data" class="form-control" id="data" name="data" placeholder="Inserisci la data" required>
+                    </div>
                 </div>
-                <form action="/add_prestito" method="POST">
-                    <div class="modal-body">
-                        <!-- Username -->
-                        <div class="form-group">
-                            <label for="username" class="font-weight-bold">Nome Utente</label>
-                            <input type="text" class="form-control" id="username" name="username" placeholder="Inserisci lo username" required>
-                        </div>
-                        <!-- Codice Copia -->
-                        <div class="form-group">
-                            <label for="id_c" class="font-weight-bold">Codice Copia</label>
-                            <input type="text" class="form-control" id="id_c" name="id_c" placeholder="Inserisci il Codice Copia" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
-                        <button type="submit" class="btn btn-primary">Aggiungi Prestito</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modifica Prestito Modal -->
-    <div class="modal fade" id="modificaPrestitoModal" tabindex="-1" role="dialog" aria-labelledby="modificaPrestitoModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content" style="background-color: #4C566A; color: #ECEFF4;">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modificaPrestitoModalLabel">Aggiorna Prestito</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
+                    <button type="submit" class="btn btn-primary">Registra Utente</button>
                 </div>
-                <form action="/update_prestito" method="POST">
-                    <div class="modal-body">
-                        <!-- Prestito ID -->
-                        <div class="form-group">
-                            <label for="prestito_id" class="font-weight-bold">ID Prestito</label>
-                            <input type="text" class="form-control" id="prestito_id" name="prestito_id" placeholder="Inserisci l'ID del Prestito" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
-                        <button type="submit" class="btn btn-success">Segna come Restituito</button>
-                    </div>
-                </form>
-            </div>
+            </form>
         </div>
     </div>
 </div>
-{% endblock %}

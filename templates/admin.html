@@ -1,9 +1,8 @@
 {% extends "base.html" %}
-
 {% block title %}Pannello Admin{% endblock %}
 
 {% block content %}
-<div class="mt-5">
+
     <!-- Header Section -->
     <div class="text-center mb-5">
         <h1 class="display-4" style="color: #81A1C1;">Pannello Admin</h1>
@@ -16,81 +15,49 @@
             <h4 class="font-weight-bold">Azioni Admin</h4>
         </div>
         <div class="card-body text-center">
-            <button class="btn btn-primary mx-2" style="background-color: #5E81AC;" data-toggle="modal" data-target="#addBibliotecarioModal">
-                Aggiungi Bibliotecario
-            </button>
-            <button class="btn btn-secondary mx-2" style="background-color: #81A1C1;" data-toggle="modal" data-target="#viewStatisticsModal">
-                Visualizza Statistiche
+            <button class="btn btn-primary" style="background-color: #5E81AC;" data-toggle="modal" data-target="#addUserModal">
+                Aggiungi Utente
             </button>
         </div>
     </div>
+
+        <!-- Users List Section -->
+        <div class="card shadow-lg mx-auto mb-5 border-0" style=" background-color: #4C566A; color: #ECEFF4;">
+            <div class="card-header text-center" style="background-color: #5E81AC; color: #ECEFF4;">
+                <h4 class="font-weight-bold">Elenco Utenti</h4>
+            </div>
+            <div class="card-body">
+                <table class="table table-hover table-dark">
+                    <thead>
+                        <tr>
+                            <th scope="col">Username</th>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Cognome</th>
+                            <th scope="col">Data</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Ruolo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {%for u in users%}
+                        <tr>
+                            <td>{{u[0]}}</td>
+                            <td>{{u[1]}}</td>
+                            <td>{{u[2]}}</td>
+                            <td>{{u[4]}}</td>
+                            <td>{{u[5]}}</td>
+                            <td>{{u[6]}}</td>
+                        </tr>
+                        {%endfor%}
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
     <!-- Add Bibliotecario Modal -->
-    <div class="modal fade" id="addBibliotecarioModal" tabindex="-1" role="dialog" aria-labelledby="addBibliotecarioModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content" style="background-color: #4C566A; color: #ECEFF4;">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addBibliotecarioModalLabel">Aggiungi Nuovo Bibliotecario</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form action="/register_bibliotecario" method="POST">
-                    <div class="modal-body">
-                        <!-- Name -->
-                        <div class="form-group">
-                            <label for="name" class="font-weight-bold">Nome</label>
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Inserisci il nome" style="background-color: #3B4252; color: #ECEFF4;" required>
-                        </div>
-                        <!-- Surname -->
-                        <div class="form-group">
-                            <label for="surname" class="font-weight-bold">Cognome</label>
-                            <input type="text" class="form-control" id="surname" name="surname" placeholder="Inserisci il cognome" style="background-color: #3B4252; color: #ECEFF4;" required>
-                        </div>
-                        <!-- Email -->
-                        <div class="form-group">
-                            <label for="email" class="font-weight-bold">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Inserisci l'email" style="background-color: #3B4252; color: #ECEFF4;" required>
-                        </div>
-                        <!-- Password -->
-                        <div class="form-group">
-                            <label for="password" class="font-weight-bold">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Crea una password" style="background-color: #3B4252; color: #ECEFF4;" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
-                        <button type="submit" class="btn btn-primary" style="background-color: #5E81AC;">Registra Bibliotecario</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    {%include "register.html"%}
 
-    <!-- View Statistics Modal -->
-    <div class="modal fade" id="viewStatisticsModal" tabindex="-1" role="dialog" aria-labelledby="viewStatisticsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content" style="background-color: #4C566A; color: #ECEFF4;">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="viewStatisticsModalLabel">Statistiche del Sistema</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>Qui puoi visualizzare le statistiche relative ai prestiti, utenti e libri.</p>
-                    <!-- Example content -->
-                    <ul>
-                        <li>Numero totale di bibliotecari: <strong>10</strong></li>
-                        <li>Numero totale di utenti registrati: <strong>250</strong></li>
-                        <li>Numero totale di libri in prestito: <strong>123</strong></li>
-                    </ul>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
-                </div>
-            </div>
-        </div>
-    </div>
+
+    
 </div>
 {% endblock %}
