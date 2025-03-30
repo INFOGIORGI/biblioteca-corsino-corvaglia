@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Dettagli Utente{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    {% if session.get("userType") == "admin" %}
+        <!-- Admin View: Display User List -->
+        <div class="row">
+            <div class="col-md-4">
+                <h3 class="text-center mb-4" style="color: #81A1C1;">Elenco Utenti</h3>
+                <div class="list-group">
+                    {% for user in user_list %}
+                    <a href="/user/{{ user[0] }}" class="list-group-item list-group-item-action" style="background-color: #4C566A; color: #ECEFF4;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span><strong>{{ user[0] }}</strong></span>
+                            <span style="font-size: 0.9em; color: #81A1C1;">{{ user[3] }}</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- User Details for Selected User -->
+            {% if selected_user %}
+            <div class="col-md-8">
+                <h3>Dettagli Utente</h3>
+                <div class="card" style="background-color: #3B4252; color: #ECEFF4;">
+                    <div class="card-body">
+                        <p><strong>Nome:</strong> {{ selected_user.nome }}</p>
+                        <p><strong>Cognome:</strong> {{ selected_user.cognome }}</p>
+                        <p><strong>Email:</strong> {{ selected_user.email }}</p>
+                        <p><strong>Data di Nascita:</strong> {{ selected_user.data_nascita }}</p>
+                    </div>
+                </div>
+
+                <h4 class="mt-4">Storico dei Prestiti</h4>
+                <table class="table table-dark table-striped">
+                    <thead>
+                        <tr>
+                            <th>Titolo del Libro</th>
+                            <th>Data Inizio</th>
+                            <th>Data Restituzione</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for prestito in prestiti %}
+                        <tr>
+                            <td><a href="{{url_for('libro', isbn=prestito[1])}}">{{prestito[0]}}</a></td>
+                            <td>{{ prestito[2] }}</td>
+                            <td>{{ prestito[3] or "Non restituito" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- Summaries Section -->
+                <h4 class="mt-4">Riassunti dei Libri Prestati</h4>
+                <ul class="list-group">
+                    {% for summary in summaries %}
+                    <li class="list-group-item" style="background-color: #4C566A; color: #ECEFF4;">
+                        {{ summary }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    {% else %}
+        <!-- Regular User View -->
+        <div class="row">
+            <!-- User Information -->
+            <div class="col-md-4">
+                <h3>Il Tuo Profilo</h3>
+                <div class="card" style="background-color: #3B4252; color: #ECEFF4;">
+                    <div class="card-body">
+                        <p><strong>Nome:</strong> {{ user.nome }}</p>
+                        <p><strong>Cognome:</strong> {{ user.cognome }}</p>
+                        <p><strong>Email:</strong> {{ user.email }}</p>
+                        <p><strong>Data di Nascita:</strong> {{ user.data_nascita }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Loan History -->
+            <div class="col-md-8">
+                <h3>Storico dei Prestiti</h3>
+                <table class="table table-dark table-striped">
+                    <thead>
+                        <tr>
+                            <th>Titolo del Libro</th>
+                            <th>Data Inizio</th>
+                            <th>Data Restituzione</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for prestito in prestiti %}
+                        <tr>
+                            <td><a href="{{url_for('libro', isbn=prestito[1])}}">{{prestito[0]}}</a></td>
+                            <td>{{ prestito[2] }}</td>
+                            <td>{{ prestito[3] or "Non restituito" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- Summaries Section -->
+                <h4 class="mt-4">Riassunti dei Libri Prestati</h4>
+                <ul class="list-group">
+                    {% for summary in summaries %}
+                    <li class="list-group-item" style="background-color: #4C566A; color: #ECEFF4;">
+                        <strong>{{ summary[0] }}</strong>: {{ summary[1] }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

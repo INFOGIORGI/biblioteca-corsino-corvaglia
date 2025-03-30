@@ -26,6 +26,7 @@
         </button>
     </div>
 
+    {%include "register.html"%}
 
     <!-- Add Bibliotecario Modal -->
     {% with messages = get_flashed_messages() %}
@@ -174,7 +175,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="/add_prestito" method="POST">
+                <form action="/addPrestito/" method="POST">
                     <div class="modal-body">
                         <!-- Username -->
                         <div class="form-group">
@@ -183,8 +184,8 @@
                         </div>
                         <!-- Codice Copia -->
                         <div class="form-group">
-                            <label for="id_c" class="font-weight-bold">Codice Copia</label>
-                            <input type="text" class="form-control" id="id_c" name="id_c" placeholder="Inserisci il Codice Copia" required>
+                            <label for="codicecopia" class="font-weight-bold">Codice Copia</label>
+                            <input type="text" class="form-control" id="codicecopia" name="codicecopia" placeholder="Inserisci il Codice Copia" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -206,12 +207,12 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="/update_prestito" method="POST">
+                <form action="/modificaPrestito" method="POST">
                     <div class="modal-body">
                         <!-- Prestito ID -->
                         <div class="form-group">
-                            <label for="prestito_id" class="font-weight-bold">ID Prestito</label>
-                            <input type="text" class="form-control" id="prestito_id" name="prestito_id" placeholder="Inserisci l'ID del Prestito" required>
+                            <label for="codicecopia" class="font-weight-bold">ID Prestito</label>
+                            <input type="text" class="form-control" id="codicecopia" name="codicecopia" placeholder="Inserisci il codice copia" required>
                         </div>
                     </div>
                     <div class="modal-footer">

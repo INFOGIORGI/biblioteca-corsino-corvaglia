@@ -2,7 +2,7 @@ from flask import Flask, render_template,request , redirect, url_for, session, f
 from flask_mysqldb import MySQL
 from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from datetime import datetime, date
 from db import *
 app = Flask(__name__)
 
@@ -197,48 +197,23 @@ def addLibro():
             flash("Tutti i campi devono essere completi per aggiungere un nuovo libro.")
             return redirect(url_for("bibliotecario"))
         
-        # Gestione dell'autore: separa nome e cognome (formato "Nome Cognome")
-    
-        nome_autore, cognome_autore = autore.strip().split(" ", 1)
-      
+        insertLibro(mysql, ISBN, titolo, anno_pubbl, genere)    
         
+        autori = autore.split(",")
+        for a in autori:                                                #Scorrendo gli autori, otteniamo nome e cognome, poi verifichiamo se sono già presenti nel db
+            autore = a.split(" ")                                  # altrimenti li aggiungiamo. Poi eseguo un altra query per ottenere l'id del'autore, e lo
+            cognome_autore = autore[-1]                                 # colleghiamo al libro in comitato
+            nome_autore = " ".join(autore[:-1])
+            print(nome_autore)
+            print(cognome_autore)
+            check_A = getAutore(mysql, nome_autore, cognome_autore)
+            if check_A == None:
+                insertAutore(mysql, nome_autore, cognome_autore)
 
-        # Verifica se l'autore esiste già nella tabella AUTORE
-        cursor = mysql.connection.cursor()
-        query = "SELECT ID_A FROM AUTORE WHERE Nome = %s AND Cognome = %s"
-        cursor.execute(query, (nome_autore, cognome_autore))
-        res = cursor.fetchone()
-        if res:
-            id_autore = res[0]
-        else:
-            # Se l'autore non esiste, lo inserisce
-            query = "INSERT INTO AUTORE (Nome, Cognome) VALUES (%s, %s)"
-            cursor.execute(query, (nome_autore, cognome_autore))
-            mysql.connection.commit()
-            id_autore = cursor.lastrowid
-        cursor.close()
-    
-        # Inserisce il nuovo libro nel database
-    
-        cursor = mysql.connection.cursor()
-        query = """
-            INSERT INTO LIBRO (ISBN, Titolo, Autore, Genere, AnnoPub, NRicerche)
-            VALUES (%s, %s, %s, %s, %s, %s)
-        """
-        # Inserisce l'ID dell'autore nel campo Autore
-        cursor.execute(query, (ISBN, titolo, id_autore, genere, anno_pubbl, 0))
-        mysql.connection.commit()
-        cursor.close()
-    
-        
-        # Inserisce il collegamento nella tabella COMITATO_DI_SCRITTURA
-    
-        cursor = mysql.connection.cursor()
-        query = "INSERT INTO COMITATO_DI_SCRITTURA (ISBN, ID_A) VALUES (%s, %s)"
-        cursor.execute(query, (ISBN, id_autore))
-        mysql.connection.commit()
-        cursor.close()
-
+            id_autore = getAutore(mysql, nome_autore, cognome_autore)[0]
+            print(id_autore)
+            insertComitato(mysql, id_autore, ISBN)
+                
 
         # Inserisce la prima copia del nuovo libro nel catalogo
         insertCopia(mysql, ISBN, posizione, 1)
@@ -247,7 +222,254 @@ def addLibro():
         
         return redirect(url_for("bibliotecario"))
 
-        
+@app.route("/addPrestito/", methods=["GET","POST"])
+def addPrestito():
+    if request.method == "GET":
+            if session.get("userType") == "utente":
+                abort(403)
+            return redirect(url_for("bibliotecario"))
+    
+    username = request.form.get("username")
+    codicecopia = request.form.get("codicecopia")
+
+    
+    
+    if isDisponibile(mysql, codicecopia)[0]:
+        dataInizio = date.today()        
+        dbAddPrestito(mysql, username, codicecopia, dataInizio)
+    else:
+        flash("Copia non disponibile")
+    
+    return redirect(url_for("bibliotecario"))
+
+@app.route("/modificaPrestito/", methods=["GET","POST"])
+def modificaPrestito():
+    if request.method == "GET":
+            if session.get("userType") == "utente":
+                abort(403)
+            return redirect(url_for("bibliotecario"))
+    
+    codicecopia = request.form.get("codicecopia")
+    print(isDisponibile(mysql, codicecopia))
+    if not isDisponibile(mysql, codicecopia)[0]:
+        dataFine = date.today()        
+        dbModificaPrestito(mysql, codicecopia, dataFine)
+    else:
+        flash("Copia non prestata")
+    
+    return redirect(url_for("bibliotecario"))
+
+@app.route("/libro/<isbn>")
+def libro(isbn):
+    
+    book_data = getBookData(mysql, isbn)
+
+    if not book_data:
+        abort(404, description="Libro non trovato")
+
+    updateLibroStats(mysql, isbn)
+
+    cover_url = f"https://covers.openlibrary.org/b/isbn/{isbn}-L.jpg"
+
+    book = {
+        "title": book_data[0][0],
+        "authors": [a[1] for a in book_data],
+        "genre": book_data[0][2],
+        "year": book_data[0][3],
+        "isbn": book_data[0][4],
+        "cover_url": cover_url,
+        "nricerche":book_data[0][5]
+    }
+
+    return render_template("libro.html", book=book)
+
+@app.route("/user", defaults={"username": None})
+@app.route("/user/<username>")
+def user_page(username):
+    if session.get("userType") == "admin":
+        # Admin View: Fetch All Users
+        cursor = mysql.connection.cursor()
+        cursor.execute("SELECT Username, Nome, Cognome, Email FROM UTENTE WHERE tipo = 'utente'")
+        user_list = cursor.fetchall()
+        print(user_list)
+
+        # Selected User Details
+        selected_user = None
+        prestiti = []
+        summaries = []
+        if username:
+            # Fetch Selected User's Info
+            cursor.execute(
+                "SELECT Nome, Cognome, Email, DataNascita FROM UTENTE WHERE Username = %s",
+                (username,),
+            )
+            user_data = cursor.fetchone()
+            selected_user = {
+                "nome": user_data[0],
+                "cognome": user_data[1],
+                "email": user_data[2],
+                "data_nascita": user_data[3],
+            }
+
+            # Loan History (Prestiti)
+            cursor.execute(
+                """
+                SELECT LIBRO.Titolo, PRESTITO.DataInizio, PRESTITO.DataRestituzione
+                FROM PRESTITO
+                INNER JOIN CATALOGO ON PRESTITO.ID_C = CATALOGO.ID_C
+                INNER JOIN LIBRO ON CATALOGO.ISBN = LIBRO.ISBN
+                WHERE PRESTITO.Username = %s
+                """,
+                (username,),
+            )
+            prestiti = cursor.fetchall()
+
+            # Fetch Summaries for Selected User
+            cursor.execute(
+                """
+                SELECT LIBRO.Titolo, RIASSUNTO.Contenuto
+                FROM RIASSUNTO
+                INNER JOIN LIBRO ON RIASSUNTO.ISBN = LIBRO.ISBN
+                WHERE RIASSUNTO.Username = %s
+                """,
+                (username,),
+            )
+            summaries = cursor.fetchall()
+            print(summaries)
+
+        cursor.close()
+        return render_template(
+            "user.html", user_list=user_list, selected_user=selected_user, prestiti=prestiti, summaries=summaries
+        )
+
+    elif session.get("userType") in ["utente", "bibliotecario"]:
+        # Regular User View: Fetch Their Own Info
+        username = session.get("username")
+        cursor = mysql.connection.cursor()
+
+        # Fetch User Info
+        cursor.execute(
+            "SELECT Nome, Cognome, Email, DataNascita FROM UTENTE WHERE Username = %s",
+            (username,),
+        )
+        user_data = cursor.fetchone()
+        user = {
+            "nome": user_data[0],
+            "cognome": user_data[1],
+            "email": user_data[2],
+            "data_nascita": user_data[3],
+        }
+
+        # Loan History (Prestiti)
+        cursor.execute(
+            """
+            SELECT LIBRO.Titolo, LIBRO.ISBN, PRESTITO.DataInizio, PRESTITO.DataRestituzione
+            FROM PRESTITO
+            INNER JOIN CATALOGO ON PRESTITO.ID_C = CATALOGO.ID_C
+            INNER JOIN LIBRO ON CATALOGO.ISBN = LIBRO.ISBN
+            WHERE PRESTITO.Username = %s
+            """,
+            (username,),
+        )
+        prestiti = cursor.fetchall()
+
+        # Fetch Summaries for the User
+        cursor.execute(
+            """
+            SELECT LIBRO.Titolo, RIASSUNTO.Contenuto
+            FROM RIASSUNTO
+            INNER JOIN LIBRO ON RIASSUNTO.ISBN = LIBRO.ISBN
+            WHERE RIASSUNTO.Username = %s
+            """,
+            (username,),
+        )
+        summaries = cursor.fetchall()
+        cursor.close()
+        print(prestiti)
+        print(summaries)
+
+        return render_template("user.html", user=user, prestiti=prestiti, summaries=summaries)
+
+    else:
+        abort(403)
+
+
+@app.route("/addSummary", methods=["POST"])
+def add_summary():
+    isbn = request.form.get("isbn")
+    summary = request.form.get("summary")
+    username = session.get("username")
+    if not isbn or not summary:
+        flash("Il riassunto non può essere vuoto.")
+        return redirect(url_for("libro", isbn=isbn))
+
+    cursor = mysql.connection.cursor()
+    query = "INSERT INTO RIASSUNTO VALUES(%s, %s, %s)"
+    cursor.execute(query, (isbn, username, summary))
+    mysql.connection.commit()
+    cursor.close()
+
+    flash("Riassunto aggiunto con successo!")
+    return redirect(url_for("libro", isbn=isbn))
+
+@app.route("/catalogo/")
+def catalogo():
+    # Get search query and sort options from request arguments
+    search_query = request.args.get("q", "").lower()
+    sort_option = request.args.get("sort", "title")
+
+    cursor = mysql.connection.cursor()
+
+    # Base Query
+    query = """
+        SELECT DISTINCT LIBRO.Titolo, GROUP_CONCAT(CONCAT(AUTORE.Nome, ' ', AUTORE.Cognome)) AS Autore, LIBRO.Genere, LIBRO.ISBN
+        FROM LIBRO
+        INNER JOIN COMITATO_DI_SCRITTURA ON LIBRO.ISBN = COMITATO_DI_SCRITTURA.ISBN
+        INNER JOIN AUTORE ON COMITATO_DI_SCRITTURA.ID_A = AUTORE.ID_A
+        GROUP BY Titolo, Genere, AnnoPub, LIBRO.ISBN;
+    """
+
+    # Search Filter
+    if search_query:
+        query += f"""
+        WHERE LOWER(LIBRO.Titolo) LIKE %s
+           OR LOWER(AUTORE.Nome) LIKE %s
+           OR LOWER(AUTORE.Cognome) LIKE %s
+           OR LOWER(LIBRO.Genere) LIKE %s
+        """
+        search_pattern = f"%{search_query}%"
+        cursor.execute(query, (search_pattern, search_pattern, search_pattern, search_pattern))
+    else:
+        cursor.execute(query)
+
+    # Fetch Data
+    book_data = cursor.fetchall()
+
+    # Sorting Logic
+    if sort_option == "author":
+        book_data = sorted(book_data, key=lambda x: x[1].lower())  # Sort by Author
+    elif sort_option == "genre":
+        book_data = sorted(book_data, key=lambda x: x[2].lower())  # Sort by Genre
+    else:  # Default sort by Title
+        book_data = sorted(book_data, key=lambda x: x[0].lower())
+
+    cursor.close()
+
+    # Format Data
+    books = []
+    for row in book_data:
+        cover_url = f"https://covers.openlibrary.org/b/isbn/{row[3]}-L.jpg"  # Example API for cover images
+        books.append({
+            "title": row[0],
+            "author": row[1],
+            "genre": row[2],
+            "isbn": row[3],
+            "cover_url": cover_url
+        })
+
+    return render_template("catalogo.html", books=books)
+
+
 
 @app.route("/logout/")
 def logout():

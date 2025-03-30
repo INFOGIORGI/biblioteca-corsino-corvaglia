@@ -8,20 +8,18 @@ DROP TABLE IF EXISTS AUTORE;
 
 CREATE TABLE AUTORE(
         ID_A int AUTO_INCREMENT,
-        Nome varchar(20) NOT NULL,
-        Cognome varchar(20) NOT NULL,
+        Nome varchar(100) NOT NULL,
+        Cognome varchar(100) NOT NULL,
         PRIMARY KEY(ID_A)
 );
 
 CREATE TABLE LIBRO(
         ISBN char(13),
         Titolo varchar(255) NOT NULL,
-        Autore int NOT NULL,
-        Genere varchar(20) NOT NULL,
+        Genere varchar(100) NOT NULL,
         AnnoPub char(4) NOT NULL,
         NRicerche int NOT NULL,
-        PRIMARY KEY(ISBN),
-        FOREIGN KEY(Autore) REFERENCES AUTORE(ID_A)       
+        PRIMARY KEY(ISBN)    
 );
 
 
@@ -46,19 +44,19 @@ CREATE TABLE CATALOGO(
 
 CREATE TABLE UTENTE(
         Username varchar(100),
-        Nome varchar(20) NOT NULL,
-        Cognome varchar(20) NOT NULL,
+        Nome varchar(100) NOT NULL,
+        Cognome varchar(100) NOT NULL,
         Password varchar(200) NOT NULL,
         DataNascita date NOT NULL,
         Email varchar(50),
-        Tipo varchar(20) NOT NULL,
+        Tipo varchar(100) NOT NULL,
         firstLogin boolean NOT NULL,
         PRIMARY KEY(Username)
 );
 
 CREATE TABLE RIASSUNTO(
         ISBN char(13),
-        Username varchar(20),
+        Username varchar(100),
         Contenuto varchar(4096) NOT NULL,
         PRIMARY KEY(ISBN, Username),
         FOREIGN KEY(ISBN) REFERENCES LIBRO(ISBN),
@@ -67,13 +65,15 @@ CREATE TABLE RIASSUNTO(
 );
 
 CREATE TABLE PRESTITO(
-        Username varchar(20),
+        Username varchar(100),
         ID_C int,
-        DataInizio date NOT NULL,
+        DataInizio date,
         DataRestituzione date,
-        PRIMARY KEY(Username, ID_C),
+        PRIMARY KEY(Username, ID_C, DataInizio),
         FOREIGN KEY(Username) REFERENCES UTENTE(Username),
         FOREIGN KEY(ID_C) REFERENCES CATALOGO(ID_C)
 );
 
 INSERT INTO UTENTE VALUES("admin", "Alberto", "Corvaglia", "scrypt:32768:8:1$ahaotWVFLUko04Xu$04a7e78c5a5c50fbd91201416edfd8fb0949f65303d3e935bf26b34a4ea42d3da8772c4a6b30c3b3f72e46af4b2a9258f3bb8a3440885922f58707a79ded3515", "2006-08-20", "albertocorvaglia@ittgiogi.edu.it", "admin", false);
+INSERT INTO UTENTE VALUES("biblio", "Alberto", "Corvaglia", "scrypt:32768:8:1$ahaotWVFLUko04Xu$04a7e78c5a5c50fbd91201416edfd8fb0949f65303d3e935bf26b34a4ea42d3da8772c4a6b30c3b3f72e46af4b2a9258f3bb8a3440885922f58707a79ded3515", "2006-08-20", "albertocorvaglia@ittgiogi.edu.it", "bibliotecario", false);
+INSERT INTO UTENTE VALUES("user", "Alberto", "Corvaglia", "scrypt:32768:8:1$ahaotWVFLUko04Xu$04a7e78c5a5c50fbd91201416edfd8fb0949f65303d3e935bf26b34a4ea42d3da8772c4a6b30c3b3f72e46af4b2a9258f3bb8a3440885922f58707a79ded3515", "2006-08-20", "albertocorvaglia@ittgiogi.edu.it", "utente", false);
