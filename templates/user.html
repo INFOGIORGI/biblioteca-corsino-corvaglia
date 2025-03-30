@@ -57,9 +57,9 @@
                 <!-- Summaries Section -->
                 <h4 class="mt-4">Riassunti dei Libri Prestati</h4>
                 <ul class="list-group">
-                    {% for summary in summaries %}
+                    {% for riassunto in riassunti %}
                     <li class="list-group-item" style="background-color: #4C566A; color: #ECEFF4;">
-                        {{ summary }}
+                        {{ riassunto }}
                     </li>
                     {% endfor %}
                 </ul>
@@ -107,9 +107,9 @@
                 <!-- Summaries Section -->
                 <h4 class="mt-4">Riassunti dei Libri Prestati</h4>
                 <ul class="list-group">
-                    {% for summary in summaries %}
+                    {% for riassunto in riassunti %}
                     <li class="list-group-item" style="background-color: #4C566A; color: #ECEFF4;">
-                        <strong>{{ summary[0] }}</strong>: {{ summary[1] }}
+                        <strong>{{ riassunto[0] }}</strong>: {{ riassunto[1] }}
                     </li>
                     {% endfor %}
                 </ul>

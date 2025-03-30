@@ -62,6 +62,12 @@
                         <a class="nav-link" href="/login/">Login</a>
                     </li>
                 {%else%}
+
+                {%if session["userType"]=="utente"%}
+                <li class="nav-item">
+                    <a class="nav-link" href="/user/">{{session["username"]}}</a>
+                </li>
+                {%endif%}
                 <li class="nav-item">
                     <a class="nav-link" href="/catalogo/">Catalogo</a>
                 </li>

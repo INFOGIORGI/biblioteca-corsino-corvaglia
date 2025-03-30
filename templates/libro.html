@@ -31,36 +31,46 @@
             </div>
         </div>
 
-        <!-- Add Summary Button Section -->
+        <!-- Add riassunto Button Section -->
         <div class="col-md-2 text-center">
-            <button type="button" class="btn btn-success btn-lg mt-5" data-toggle="modal" data-target="#addSummaryModal">
+            <button type="button" class="btn btn-success btn-lg mt-5" data-toggle="modal" data-target="#addRiassuntoModal">
                 Aggiungi Riassunto
             </button>
         </div>
     </div>
 </div>
 
-<!-- Modal for Adding Summary -->
-<div class="modal fade" id="addSummaryModal" tabindex="-1" role="dialog" aria-labelledby="addSummaryModalLabel" aria-hidden="true">
+<!-- Modal for Adding riassunto -->
+<div class="modal fade" id="addRiassuntoModal" tabindex="-1" role="dialog" aria-labelledby="addRiassuntoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" style="background-color: #4C566A; color: #ECEFF4;">
             <div class="modal-header">
-                <h5 class="modal-title" id="addSummaryModalLabel">Aggiungi Riassunto per {{ book.title }}</h5>
+                <h5 class="modal-title" id="addRiassuntoModalLabel">Aggiungi Riassunto per {{ book.title }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form action="/addSummary" method="POST">
+                <form action="/addRiassunto" method="POST">
                     <input type="hidden" name="isbn" value="{{ book.isbn }}">
                     <div class="form-group">
-                        <label for="summary">Riassunto</label>
-                        <textarea name="summary" id="summary" class="form-control" rows="8" placeholder="Scrivi qui il riassunto del libro" required></textarea>
+                        <label for="riassunto">Riassunto</label>
+                        <textarea name="riassunto" id="riassunto" class="form-control" rows="8" placeholder="Scrivi qui il riassunto del libro" required></textarea>
                     </div>
                     <button type="submit" class="btn btn-success">Salva Riassunto</button>
                 </form>
             </div>
         </div>
+        </div>
     </div>
+    <!-- Summaries Section -->
+    <h4 class="mt-4">Riassunti degli Utenti</h4>
+    <ul class="list-group">
+        {% for riassunto in riassunti %}
+        <li class="list-group-item" style="background-color: #4C566A; color: #ECEFF4;">
+            <strong>{{ riassunto[0] }}</strong>: {{ riassunto[1] }}
+        </li>
+        {% endfor %}
+    </ul>
 </div>
 {% endblock %}

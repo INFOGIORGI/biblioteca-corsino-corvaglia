@@ -10,13 +10,13 @@
     <form method="GET" action="{{ url_for('catalogo') }}" class="mb-4">
         <div class="row">
             <div class="col-md-6">
-                <input type="text" name="q" class="form-control" placeholder="Cerca per titolo, autore, o genere" value="{{ request.args.get('q', '') }}">
+                <input type="text" name="keyword" class="form-control" placeholder="Cerca per titolo, autore, o genere" value="{{ request.args.get('keyword', '') }}">
             </div>
             <div class="col-md-4">
                 <select name="sort" class="form-control">
-                    <option value="title" {% if request.args.get('sort') == 'title' %}selected{% endif %}>Ordina per Titolo</option>
-                    <option value="author" {% if request.args.get('sort') == 'author' %}selected{% endif %}>Ordina per Autore</option>
-                    <option value="genre" {% if request.args.get('sort') == 'genre' %}selected{% endif %}>Ordina per Genere</option>
+                    <option value="Titolo" {% if request.args.get('sort') == 'Titolo' %}selected{% endif %}>Ordina per Titolo</option>
+                    <option value="Autori" {% if request.args.get('sort') == 'Autori' %}selected{% endif %}>Ordina per Autore</option>
+                    <option value="Genere" {% if request.args.get('sort') == 'Genere' %}selected{% endif %}>Ordina per Genere</option>
                 </select>
             </div>
             <div class="col-md-2">
@@ -30,13 +30,20 @@
         <div class="row">
             {% for book in books %}
             <div class="col-md-4 mb-4">
-                <div class="card" style="background-color: #3B4252; color: #ECEFF4;">
+                <div class="card" style="
+                {% if book.disponibile %}
+                background-color: #3B4252;
+                {% else %}
+                background-color: #444; opacity: 0.6;
+                {% endif %}
+                color: #ECEFF4;
+                ">
                     <div class="card-body text-center">
                         <img src="{{ book.cover_url }}" alt="Copertina del Libro" class="img-fluid rounded shadow mb-3" style="max-height: 200px;">
-                        <h5 class="card-title">{{ book.title }}</h5>
+                        <h5 class="card-title">{{ book.titolo }}</h5>
                         <p class="card-text">
-                            <strong>Autore:</strong> {{ book.author }}<br>
-                            <strong>Genere:</strong> {{ book.genre }}
+                            <strong>Autore:</strong> {{ book.autori }}<br>
+                            <strong>Genere:</strong> {{ book.genere }}
                         </p>
                         <a href="{{ url_for('libro', isbn=book.isbn) }}" class="btn btn-primary">Dettagli</a>
                     </div>

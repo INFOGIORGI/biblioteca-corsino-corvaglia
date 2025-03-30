@@ -10,8 +10,8 @@
         <p class="lead" style="color: #D8DEE9;">Gestisci utenti, libri e prestiti con facilità e precisione.</p>
     </div>
 
-    <!-- Add User and Prestito Buttons -->
-    <div class="text-center">
+    <!-- Add Buttons -->
+    <div class="text-center mb-4">
         <button class="btn btn-primary" style="background-color: #5E81AC;" data-toggle="modal" data-target="#isbnModal">
             Aggiungi Libro
         </button>
@@ -26,9 +26,9 @@
         </button>
     </div>
 
-    {%include "register.html"%}
+    {% include "register.html" %}
 
-    <!-- Add Bibliotecario Modal -->
+    <!-- Flash Messages -->
     {% with messages = get_flashed_messages() %}
     {% if messages %}
         <div class="alert alert-danger">
@@ -38,133 +38,131 @@
         </div>
     {% endif %}
     {% endwith %}
+
     <!-- Modal for ISBN Input -->
     <div class="modal fade" id="isbnModal" tabindex="-1" role="dialog" aria-labelledby="isbnModalLabel">
         <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h5 class="modal-title">Verifica ISBN</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            </div>
-            <div class="modal-body">
-            <form action="{{ url_for('addLibro') }}" method="POST">
-                <div class="form-group">
-                <label for="ISBN">Inserisci ISBN</label>
-                <input type="text" name="ISBN" id="ISBN" class="form-control" placeholder="Inserisci ISBN" required>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Verifica ISBN</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                <button type="submit" class="btn btn-primary">Verifica ISBN</button>
-            </form>
+                <div class="modal-body">
+                    <form action="{{ url_for('addLibro') }}" method="POST">
+                        <div class="form-group">
+                            <label for="ISBN">Inserisci ISBN</label>
+                            <input type="text" name="ISBN" id="ISBN" class="form-control" placeholder="Inserisci ISBN" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Verifica ISBN</button>
+                    </form>
+                </div>
             </div>
-        </div>
         </div>
     </div>
-
+    
     <!-- Modal for Adding Copies -->
     {% if book == "esiste" %}
     <div class="modal fade" id="addCopiesModal" tabindex="-1" role="dialog" aria-labelledby="addCopiesModalLabel">
         <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h5 class="modal-title">Aggiungi Copie</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            </div>
-            <div class="modal-body">
-            <p>Il libro con ISBN <strong>{{ ISBN }}</strong> esiste già. Inserisci il numero di copie da aggiungere e la posizione.</p>
-            <form action="{{ url_for('addLibro') }}" id="addCopies" method="POST">
-                <input type="hidden" name="mod" value="addCopia">
-                <input type="hidden" name="ISBN" value="{{ ISBN }}">
-                <div class="form-group">
-                <label for="ncopie">Numero di copie</label>
-                <input type="number" name="ncopie" id="ncopie" class="form-control" required>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Aggiungi Copie</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                <div class="form-group">
-                <label for="posizione">Posizione</label>
-                <input type="text" name="posizione" id="posizione" class="form-control" required>
+                <div class="modal-body">
+                    <p>Il libro con ISBN <strong>{{ ISBN }}</strong> esiste già. Inserisci il numero di copie da aggiungere e la posizione.</p>
+                    <form action="{{ url_for('addLibro') }}" id="addCopies" method="POST">
+                        <input type="hidden" name="mod" value="addCopia">
+                        <input type="hidden" name="ISBN" value="{{ ISBN }}">
+                        <div class="form-group">
+                            <label for="ncopie">Numero di copie</label>
+                            <input type="number" name="ncopie" id="ncopie" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="posizione">Posizione</label>
+                            <input type="text" name="posizione" id="posizione" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Aggiungi copie</button>
+                    </form>
                 </div>
-                <button type="submit" class="btn btn-primary">Aggiungi copie</button>
-            </form>
             </div>
-        </div>
         </div>
     </div>
     {% endif %}
-
+    
     <!-- Modal for Adding New Book -->
     {% if book == "nonesiste" %}
     <div class="modal fade" id="addBookModal" tabindex="-1" role="dialog" aria-labelledby="addBookModalLabel">
         <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h5 class="modal-title">Aggiungi Dettagli del Libro</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Aggiungi Dettagli del Libro</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Il libro con ISBN <strong>{{ ISBN }}</strong> non esiste. Inserisci i dettagli del nuovo libro.</p>
+                    <form action="{{ url_for('addLibro') }}" id="addBook" method="POST">
+                        <input type="hidden" name="mod" value="addLibro">
+                        <input type="hidden" name="ISBN" value="{{ ISBN }}">
+                        <div class="form-group">
+                            <label for="titolo">Titolo</label>
+                            <input type="text" name="titolo" id="titolo" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="autore">Autore</label>
+                            <input type="text" name="autore" id="autore" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="anno_pubbl">Anno di pubblicazione</label>
+                            <input type="number" name="anno_pubbl" id="anno_pubbl" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="genere">Genere</label>
+                            <input type="text" name="genere" id="genere" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="posizione">Posizione</label>
+                            <input type="text" name="posizione" id="posizione" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Aggiungi libro</button>
+                    </form>
+                </div>
             </div>
-            <div class="modal-body">
-            <p>Il libro con ISBN <strong>{{ ISBN }}</strong> non esiste. Inserisci i dettagli del nuovo libro.</p>
-            <form action="{{ url_for('addLibro') }}" id="addBook" method="POST">
-                <input type="hidden" name="mod" value="addLibro">
-                <input type="hidden" name="ISBN" value="{{ ISBN }}">
-                <div class="form-group">
-                <label for="titolo">Titolo</label>
-                <input type="text" name="titolo" id="titolo" class="form-control" required>
-                </div>
-                <div class="form-group">
-                <label for="autore">Autore</label>
-                <input type="text" name="autore" id="autore" class="form-control" required>
-                </div>
-                <div class="form-group">
-                <label for="anno_pubbl">Anno di pubblicazione</label>
-                <input type="number" name="anno_pubbl" id="anno_pubbl" class="form-control" required>
-                </div>
-                <div class="form-group">
-                <label for="genere">Genere</label>
-                <input type="text" name="genere" id="genere" class="form-control" required>
-                </div>
-                <div class="form-group">
-                <label for="posizione">Posizione</label>
-                <input type="text" name="posizione" id="posizione" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Aggiungi libro</button>
-            </form>
-            </div>
-        </div>
         </div>
     </div>
     {% endif %}
-    </div>
+
     <script>
-        
+        // Open the appropriate modal based on the book status
+        {% if book == "esiste" %}
+            document.addEventListener("DOMContentLoaded", function() {
+                var modalElement = document.getElementById("addCopiesModal");
+                var bootstrapModal = new bootstrap.Modal(modalElement, { backdrop: 'static', keyboard: false });
+                bootstrapModal.show();
 
-    </script>
-    <script>
-    // Open the appropriate modal based on the book status
-    {% if book == "esiste" %}
-        document.addEventListener("DOMContentLoaded", function() {
-            var modalElement = document.getElementById("addCopiesModal");
-            var bootstrapModal = new bootstrap.Modal(modalElement, { backdrop: 'static', keyboard: false });
-            bootstrapModal.show();
-
-            document.getElementById("addCopies").addEventListener("submit", function() {
-                bootstrapModal.hide(); // Close modal after submission
+                document.getElementById("addCopies").addEventListener("submit", function() {
+                    bootstrapModal.hide(); // Close modal after submission
+                });
             });
-        });
-    {% elif book == "nonesiste" %}
-        document.addEventListener("DOMContentLoaded", function() {
-            var modalElement = document.getElementById("addBookModal");
-            var bootstrapModal = new bootstrap.Modal(modalElement, { backdrop: 'static', keyboard: false });
-            bootstrapModal.show();
+        {% elif book == "nonesiste" %}
+            document.addEventListener("DOMContentLoaded", function() {
+                var modalElement = document.getElementById("addBookModal");
+                var bootstrapModal = new bootstrap.Modal(modalElement, { backdrop: 'static', keyboard: false });
+                bootstrapModal.show();
 
-            document.getElementById("addBook").addEventListener("submit", function() {
-                bootstrapModal.hide(); // Close modal after submission
+                document.getElementById("addBook").addEventListener("submit", function() {
+                    bootstrapModal.hide(); // Close modal after submission
+                });
             });
-        });
-    {% endif %}
+        {% endif %}
     </script>
+
     <!-- Add Prestito Modal -->
     <div class="modal fade" id="addPrestitoModal" tabindex="-1" role="dialog" aria-labelledby="addPrestitoModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -207,7 +205,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="/modificaPrestito" method="POST">
+                <form action="/editPrestito" method="POST">
                     <div class="modal-body">
                         <!-- Prestito ID -->
                         <div class="form-group">
@@ -222,6 +220,88 @@
                 </form>
             </div>
         </div>
+    </div>
+
+    <!-- Books Table -->
+    <h2 class="text-center mt-5" style="color: #88C0D0;">Lista Libri</h2>
+    <div class="table-responsive">
+        <table class="table table-dark table-striped table-hover text-center">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Titolo</th>
+                    <th scope="col">ISBN</th>
+                    <th scope="col">Autore</th>
+                    <th scope="col">Anno</th>
+                    <th scope="col">Genere</th>
+                    <th scope="col">Codice Copia</th>
+                    <th scope="col">Posizione</th>
+                    <th scope="col">Disponibilità</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for libro in copie %}
+                <tr>
+                    <td>{{ libro[0] }}</td>
+                    <td>{{ libro[1] }}</td>
+                    <td>{{ libro[2] }}</td>
+                    <td>{{ libro[3] }}</td>
+                    <td>{{ libro[4] }}</td>
+                    <td>{{ libro[5] }}</td>
+                    <td>{{ libro[6] }}</td>
+                    <td>
+                        {% if libro[7] %}
+                            <span class="badge badge-success">Disponibile</span>
+                        {% else %}
+                            <span class="badge badge-warning">In prestito</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8">Nessun libro presente.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Prestiti Table -->
+    <h2 class="text-center mt-5" style="color: #88C0D0;">Prestiti Attivi</h2>
+    <div class="table-responsive">
+        <table class="table table-dark table-striped table-hover text-center">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Username</th>
+                    <th scope="col">ISBN</th>
+                    <th scope="col">Codice Copia</th>
+                    <th scope="col">Data Inizio</th>
+                    <th scope="col">Data Fine</th>
+                    <th scope="col">Stato</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prestito in prestiti %}
+                <tr>
+                    <td>{{ prestito[0] }}</td>
+                    <td>{{ prestito[1] }}</td>
+                    <td>{{ prestito[2] }}</td>
+                    <td>{{ prestito[3] }}</td>
+                    <td>{{ prestito[4] if prestito[4] else '-' }}</td>
+                    <td>
+                        {% if prestito[4] %}
+                            <span class="badge badge-success">Restituito</span>
+                        {% else %}
+                            <span class="badge badge-warning">In prestito</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6">Nessun prestito attivo.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}
