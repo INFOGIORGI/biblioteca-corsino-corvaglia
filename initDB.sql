@@ -36,7 +36,7 @@ CREATE TABLE COMITATO_DI_SCRITTURA(
 CREATE TABLE CATALOGO(
         ID_C int AUTO_INCREMENT,
         ISBN char(13) NOT NULL,
-        Posizione char(6) NOT NULL UNIQUE,
+        Posizione char(4) NOT NULL,
         isDisponibile boolean NOT NULL,
         PRIMARY KEY(ID_C),
         FOREIGN KEY(ISBN) REFERENCES LIBRO(ISBN)
@@ -45,7 +45,7 @@ CREATE TABLE CATALOGO(
 
 
 CREATE TABLE UTENTE(
-        Username varchar(20),
+        Username varchar(100),
         Nome varchar(20) NOT NULL,
         Cognome varchar(20) NOT NULL,
         Password varchar(200) NOT NULL,
@@ -76,4 +76,4 @@ CREATE TABLE PRESTITO(
         FOREIGN KEY(ID_C) REFERENCES CATALOGO(ID_C)
 );
 
-INSERT INTO UTENTE VALUES("admin", "Alberto", "Corvaglia", "scrypt:32768:8:1$ahaotWVFLUko04Xu$04a7e78c5a5c50fbd91201416edfd8fb0949f65303d3e935bf26b34a4ea42d3da8772c4a6b30c3b3f72e46af4b2a9258f3bb8a3440885922f58707a79ded3515", "2006-08-20", "albertocorvaglia@ittgiogi.edu.it", "admin", false)
+INSERT INTO UTENTE VALUES("admin", "Alberto", "Corvaglia", "scrypt:32768:8:1$ahaotWVFLUko04Xu$04a7e78c5a5c50fbd91201416edfd8fb0949f65303d3e935bf26b34a4ea42d3da8772c4a6b30c3b3f72e46af4b2a9258f3bb8a3440885922f58707a79ded3515", "2006-08-20", "albertocorvaglia@ittgiogi.edu.it", "admin", false);

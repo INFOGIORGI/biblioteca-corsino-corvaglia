@@ -23,9 +23,12 @@ Session(app)
 
 @app.route("/")
 def home():
-    if session.get("username"):
+    if session.get("isFirstLogin"):
         session["isFirstLogin"] = getCredenziali(mysql, session["username"])[-1]
     return render_template("home.html", titolo ="Home")
+
+# -------------------------------------------------------------- GESTIONE UTENTI --------------------------------------------------------------------------------------
+
 
 @app.route("/login/", methods = ["GET", "POST"])
 def login():
@@ -96,24 +99,26 @@ def register():
    
 @app.route("/password-update/", methods=["POST", "GET"])
 def passwordUpdate():
-    
-    if not session["isFirstLogin"]:
-        flash("Non è il primo login")
-        return redirect(url_for("home"))
-    password = request.form.get("password","")
-    password_confirm = request.form.get("confirm","")
-    print(password, password_confirm)
-    if password == "" or password_confirm == "":
-            flash("Tutti i campi devono essere completi")
+    if request.method == "POST":
+        if not session["isFirstLogin"]:
+            flash("Non è il primo login")
+            return redirect(url_for("home"))
+        password = request.form.get("password","")
+        password_confirm = request.form.get("confirm","")
+        print(password, password_confirm)
+        if password == "" or password_confirm == "":
+                flash("Tutti i campi devono essere completi")
+                return redirect(url_for("passwordUpdate"))
+        if password_confirm != password:
+            flash("Le password non corrispondono")
             return redirect(url_for("passwordUpdate"))
-    if password_confirm != password:
-        flash("Le password non corrispondono")
-        return redirect(url_for("passwordUpdate"))
 
-    username = session["username"]
-    password = generate_password_hash(password)
-    updatePassword(mysql, username, password)
+        username = session["username"]
+        password = generate_password_hash(password)
+        updatePassword(mysql, username, password)
 
+    else:
+        abort(403)
     
     return redirect(url_for("home"))
 
@@ -128,12 +133,122 @@ def admin():
    
 @app.route("/bibliotecario/")
 def bibliotecario():
-    if session.get("userType")=="bibliotecario":
-        users = getUsers(mysql)
-        return render_template("bibliotecario.html",users=users) 
+    if session.get("userType") == "bibliotecario":
+        book = session.pop("book", None)  # Remove from session after retrieving
+        ISBN = session.pop("ISBN", None)  # Remove from session after retrieving
+        return render_template("bibliotecario.html", book=book, ISBN=ISBN)
     else:
-        return abort(403)    
-   
+        return abort(403)
+  
+
+#------------------------------------------------------------------------GESTIONE LIBRI-------------------------------------------------------------------------------------
+@app.route("/addLibro/", methods=["GET", "POST"])
+def addLibro():
+    
+    if request.method == "GET":
+        if session.get("userType") == "utente":
+            abort(403)
+        return redirect(url_for("bibliotecario"))
+    
+    
+    mod = request.form.get("mod", "") #All'inizio non specifichiamo il tipo di modale
+    
+    ISBN = request.form.get("ISBN", "")
+    if ISBN == "":
+            flash("Il campo ISBN è obbligatorio.")
+            return redirect(url_for("bibliotecario"))
+    
+    if mod == "":
+        session["ISBN"] = ISBN
+        if getLibro(mysql, ISBN):
+            session["book"] = "esiste"
+            
+        else:
+            session["book"] = "nonesiste"# Il valore book serve nel frontend, per capire in quale caso ci troviamo
+                      # e cambierà il valore "mod" 
+        return redirect(url_for("bibliotecario"))
+    
+    
+    elif mod == "addCopia":
+        ncopie = request.form.get("ncopie", "")
+        posizione = request.form.get("posizione", "")
+        
+        if "" in (ncopie, posizione):
+            flash("Tutti i campi devono essere completi per aggiungere copie.")
+            return redirect(url_for("bibliotecario"))
+        
+        if ncopie.isnumeric() == False:
+            flash("Il numero di copie non può essere formato da lettere")
+        
+        ncopie = int(ncopie)
+        insertCopia(mysql, ISBN, posizione, ncopie)
+        flash("Copie aggiunte con successo.")
+        return redirect(url_for("bibliotecario"))
+    
+    elif mod == "addLibro":
+        titolo = request.form.get("titolo", "")
+        autore = request.form.get("autore", "")
+        anno_pubbl = request.form.get("anno_pubbl", "")
+        genere = request.form.get("genere", "")
+        posizione = request.form.get("posizione", "")
+        
+        
+        if "" in (ISBN, titolo, autore, anno_pubbl, genere, posizione):
+            flash("Tutti i campi devono essere completi per aggiungere un nuovo libro.")
+            return redirect(url_for("bibliotecario"))
+        
+        # Gestione dell'autore: separa nome e cognome (formato "Nome Cognome")
+    
+        nome_autore, cognome_autore = autore.strip().split(" ", 1)
+      
+        
+
+        # Verifica se l'autore esiste già nella tabella AUTORE
+        cursor = mysql.connection.cursor()
+        query = "SELECT ID_A FROM AUTORE WHERE Nome = %s AND Cognome = %s"
+        cursor.execute(query, (nome_autore, cognome_autore))
+        res = cursor.fetchone()
+        if res:
+            id_autore = res[0]
+        else:
+            # Se l'autore non esiste, lo inserisce
+            query = "INSERT INTO AUTORE (Nome, Cognome) VALUES (%s, %s)"
+            cursor.execute(query, (nome_autore, cognome_autore))
+            mysql.connection.commit()
+            id_autore = cursor.lastrowid
+        cursor.close()
+    
+        # Inserisce il nuovo libro nel database
+    
+        cursor = mysql.connection.cursor()
+        query = """
+            INSERT INTO LIBRO (ISBN, Titolo, Autore, Genere, AnnoPub, NRicerche)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """
+        # Inserisce l'ID dell'autore nel campo Autore
+        cursor.execute(query, (ISBN, titolo, id_autore, genere, anno_pubbl, 0))
+        mysql.connection.commit()
+        cursor.close()
+    
+        
+        # Inserisce il collegamento nella tabella COMITATO_DI_SCRITTURA
+    
+        cursor = mysql.connection.cursor()
+        query = "INSERT INTO COMITATO_DI_SCRITTURA (ISBN, ID_A) VALUES (%s, %s)"
+        cursor.execute(query, (ISBN, id_autore))
+        mysql.connection.commit()
+        cursor.close()
+
+
+        # Inserisce la prima copia del nuovo libro nel catalogo
+        insertCopia(mysql, ISBN, posizione, 1)
+        flash("Libro aggiunto con successo.")
+
+        
+        return redirect(url_for("bibliotecario"))
+
+        
+
 @app.route("/logout/")
 def logout():
     session.clear()
