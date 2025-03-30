@@ -330,7 +330,7 @@ def userData():
     abort(403)
 
 @app.route("/user/<username>")
-def getUsers(username):
+def adminUsers(username):
     if session.get("userType") == "admin":
         
         if username:
