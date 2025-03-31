@@ -29,7 +29,7 @@ Session(app)
 @app.route("/")
 def home():
     if session.get("isFirstLogin"):
-        session["isFirstLogin"] = getCredenziali(mysql, session["username"])['firstLogin']
+        session["isFirstLogin"] = getCredenziali(mysql, session["username"])['firstLogin'] #serve per far cambiare password al primo login
     return render_template("home.html", titolo ="Home")
 
 
@@ -75,12 +75,12 @@ def register():
         cognome = request.form.get("cognome")
         data = request.form.get("data")
         email = request.form.get("email")
+        #l'admin registra utenti di tipo bibliotecario e il bibliotecario utenti normali
         if session["userType"] == "admin":  
              tipo = "bibliotecario"
         elif session["userType"] == "bibliotecario":
             tipo = "utente"
-       
-
+    
         if nome == "" or cognome == "" or data == "" or email =="":
             flash("Tutti i campi devono essere completi")
             return redirect(url_for("register"))
@@ -93,12 +93,12 @@ def register():
             flash("La mail non è nel formato corretto (mail@example.com)")
             return redirect(url_for("register"))
         
-        genPwd = nome.lower() + cognome.lower() + data.lower() #formata da nome, data di nascita, cognome (es. AlbertoCorvaglia2006-08-20)
+        genPwd = nome.lower() + cognome.lower() + data.lower() #formata da nome, data di nascita, cognome (es. albertocorvaglia2006-08-20) server per il primo login
         pw = generate_password_hash(genPwd)
         
         user = nome+cognome
         
-        sameNameUsers = getSameNameUsers(mysql, nome,cognome)
+        sameNameUsers = getSameNameUsers(mysql, nome,cognome) #se ci sono utenti con lo stesso nome e cognome aggiunge il  numero di utenti con quel nome 
         if len(sameNameUsers)>0 and sameNameUsers[0]>0:
             user+=str(sameNameUsers)
         
@@ -318,7 +318,6 @@ def libro(isbn):
 @app.route("/user/")
 def userData():
     if session.get("userType") == "admin":
-        # Admin View: Fetch All Users
         user_list = getUserList(mysql)
         return render_template("user.html",user_list=user_list)
     
@@ -339,7 +338,6 @@ def adminUsers(username):
             if len(getCredenziali(mysql,username))<1:
                 abort(404,"Utente non esistente")
             
-            # Fetch Selected User's Info
             user_list= getUserList(mysql)
             user_data = getAnagrafica(mysql, username)
 
@@ -378,8 +376,7 @@ def catalogo():
 
     
     book_data = getLibri(mysql,keyword,sort)
-
-    # Render the catalog template with the fetched books
+    
     return render_template("catalogo.html", books=book_data, isDisponibile=isDisponibile, mysql=mysql)
 
 
