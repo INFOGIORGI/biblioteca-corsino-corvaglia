@@ -7,24 +7,20 @@
     <div class="row">
         <!-- Book Cover Section -->
         <div class="col-md-4 text-center">
-            <img src="{{ book.cover_url }}" alt="Copertina del Libro" class="img-fluid rounded shadow" style="max-height: 400px;">
+            <img src="https://covers.openlibrary.org/b/isbn/{{book['ISBN']}}-L.jpg" alt="Copertina del Libro" class="img-fluid rounded shadow" style="max-height: 400px;">
         </div>
 
         <!-- Book Information Section -->
         <div class="col-md-6">
             <div class="card" style="background-color: #3B4252; color: #ECEFF4;">
                 <div class="card-body">
-                    <h3 class="card-title">{{ book.title }}</h3>
+                    <h3 class="card-title">{{ book['Titolo'] }}</h3>
                     <p class="card-text">
-                        <strong>Autori:</strong> 
-                        {% for a in book.authors %}
-                        {{ a }} 
-                        {% endfor %}
-                        <br>
-                        <strong>Genere:</strong> {{ book.genre }}<br>
-                        <strong>Anno di Pubblicazione:</strong> {{ book.year }}<br>
-                        <strong>ISBN:</strong> {{ book.isbn }}<br>
-                        <strong>Numero di volte cercato:</strong> {{ book.nricerche }}
+                        <strong>Autori:</strong>{{ book['Autori'] }}<br>
+                        <strong>Genere:</strong> {{ book['Genere'] }}<br>
+                        <strong>Anno di Pubblicazione:</strong> {{ book['AnnoPub'] }}<br>
+                        <strong>ISBN:</strong> {{ book['ISBN'] }}<br>
+                        <strong>Numero di volte cercato:</strong> {{ book['nRicerche'] }}
                     </p>
                     <a href="/catalogo/" class="btn btn-primary">Torna al Catalogo</a>
                 </div>
@@ -45,14 +41,14 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" style="background-color: #4C566A; color: #ECEFF4;">
             <div class="modal-header">
-                <h5 class="modal-title" id="addRiassuntoModalLabel">Aggiungi Riassunto per {{ book.title }}</h5>
+                <h5 class="modal-title" id="addRiassuntoModalLabel">Aggiungi Riassunto per {{ book['Titolo'] }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form action="/addRiassunto" method="POST">
-                    <input type="hidden" name="isbn" value="{{ book.isbn }}">
+                <form action="/addRiassunto/" method="POST">
+                    <input type="hidden" name="isbn" value="{{ book['ISBN'] }}">
                     <div class="form-group">
                         <label for="riassunto">Riassunto</label>
                         <textarea name="riassunto" id="riassunto" class="form-control" rows="8" placeholder="Scrivi qui il riassunto del libro" required></textarea>
@@ -68,7 +64,7 @@
     <ul class="list-group">
         {% for riassunto in riassunti %}
         <li class="list-group-item" style="background-color: #4C566A; color: #ECEFF4;">
-            <strong>{{ riassunto[0] }}</strong>: {{ riassunto[1] }}
+            <strong>{{ riassunto['Username'] }}</strong>: {{ riassunto['Contenuto'] }}
         </li>
         {% endfor %}
     </ul>

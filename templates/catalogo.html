@@ -31,7 +31,7 @@
             {% for book in books %}
             <div class="col-md-4 mb-4">
                 <div class="card" style="
-                {% if book.disponibile %}
+                {% if isDisponibile(mysql,book['ISBN']) %}
                 background-color: #3B4252;
                 {% else %}
                 background-color: #444; opacity: 0.6;
@@ -39,13 +39,13 @@
                 color: #ECEFF4;
                 ">
                     <div class="card-body text-center">
-                        <img src="{{ book.cover_url }}" alt="Copertina del Libro" class="img-fluid rounded shadow mb-3" style="max-height: 200px;">
-                        <h5 class="card-title">{{ book.titolo }}</h5>
+                        <img src="https://covers.openlibrary.org/b/isbn/{{book['ISBN']}}-L.jpg" alt="Copertina del Libro" class="img-fluid rounded shadow mb-3" style="max-height: 200px;">
+                        <h5 class="card-title">{{ book['Titolo'] }}</h5>
                         <p class="card-text">
-                            <strong>Autore:</strong> {{ book.autori }}<br>
-                            <strong>Genere:</strong> {{ book.genere }}
+                            <strong>Autore:</strong> {{ book['Autori'] }}<br>
+                            <strong>Genere:</strong> {{ book['Genere'] }}
                         </p>
-                        <a href="{{ url_for('libro', isbn=book.isbn) }}" class="btn btn-primary">Dettagli</a>
+                        <a href="{{ url_for('libro', isbn=book['ISBN']) }}" class="btn btn-primary">Dettagli</a>
                     </div>
                 </div>
             </div>

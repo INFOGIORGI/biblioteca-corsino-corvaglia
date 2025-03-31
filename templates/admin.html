@@ -35,18 +35,16 @@
                             <th scope="col">Cognome</th>
                             <th scope="col">Data</th>
                             <th scope="col">Email</th>
-                            <th scope="col">Ruolo</th>
                         </tr>
                     </thead>
                     <tbody>
                         {%for u in users%}
                         <tr>
-                            <td>{{u[0]}}</td>
-                            <td>{{u[1]}}</td>
-                            <td>{{u[2]}}</td>
-                            <td>{{u[4]}}</td>
-                            <td>{{u[5]}}</td>
-                            <td>{{u[6]}}</td>
+                            <td>{{u['Username']}}</td>
+                            <td>{{u['Nome']}}</td>
+                            <td>{{u['Cognome']}}</td>
+                            <td>{{u['DataNascita']}}</td>
+                            <td>{{u['Email']}}</td>
                         </tr>
                         {%endfor%}
                     </tbody>

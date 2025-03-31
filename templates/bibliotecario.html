@@ -6,7 +6,7 @@
 <div class="mt-5">
     <!-- Header Section -->
     <div class="text-center mb-5">
-        <h1 class="display-4" style="color: #81A1C1;">Benvenuto, <span style="color: #88C0D0;">{{ user_name }}</span></h1>
+        <h1 class="display-4" style="color: #81A1C1;">Benvenuto, <span style="color: #88C0D0;">{{ session['username'] }}</span></h1>
         <p class="lead" style="color: #D8DEE9;">Gestisci utenti, libri e prestiti con facilità e precisione.</p>
     </div>
 
@@ -230,10 +230,10 @@
                 <tr>
                     <th scope="col">Titolo</th>
                     <th scope="col">ISBN</th>
-                    <th scope="col">Autore</th>
+                    <th scope="col">Autore/i</th>
                     <th scope="col">Anno</th>
                     <th scope="col">Genere</th>
-                    <th scope="col">Codice Copia</th>
+                    <th scope="col">ID Copia</th>
                     <th scope="col">Posizione</th>
                     <th scope="col">Disponibilità</th>
                 </tr>
@@ -241,15 +241,15 @@
             <tbody>
                 {% for libro in copie %}
                 <tr>
-                    <td>{{ libro[0] }}</td>
-                    <td>{{ libro[1] }}</td>
-                    <td>{{ libro[2] }}</td>
-                    <td>{{ libro[3] }}</td>
-                    <td>{{ libro[4] }}</td>
-                    <td>{{ libro[5] }}</td>
-                    <td>{{ libro[6] }}</td>
+                    <td>{{ libro['Titolo'] }}</td>
+                    <td>{{ libro['ISBN'] }}</td>
+                    <td>{{ libro['Autori'] }}</td>
+                    <td>{{ libro['AnnoPub'] }}</td>
+                    <td>{{ libro['Genere'] }}</td>
+                    <td>{{ libro['ID_C'] }}</td>
+                    <td>{{ libro['Posizione'] }}</td>
                     <td>
-                        {% if libro[7] %}
+                        {% if libro['isDisponibile'] %}
                             <span class="badge badge-success">Disponibile</span>
                         {% else %}
                             <span class="badge badge-warning">In prestito</span>
@@ -273,7 +273,7 @@
                 <tr>
                     <th scope="col">Username</th>
                     <th scope="col">ISBN</th>
-                    <th scope="col">Codice Copia</th>
+                    <th scope="col">ID Copia</th>
                     <th scope="col">Data Inizio</th>
                     <th scope="col">Data Fine</th>
                     <th scope="col">Stato</th>
@@ -282,11 +282,11 @@
             <tbody>
                 {% for prestito in prestiti %}
                 <tr>
-                    <td>{{ prestito[0] }}</td>
-                    <td>{{ prestito[1] }}</td>
-                    <td>{{ prestito[2] }}</td>
-                    <td>{{ prestito[3] }}</td>
-                    <td>{{ prestito[4] if prestito[4] else '-' }}</td>
+                    <td>{{ prestito['username'] }}</td>
+                    <td>{{ prestito['ISBN'] }}</td>
+                    <td>{{ prestito['ID_C'] }}</td>
+                    <td>{{ prestito['DataInizio'] }}</td>
+                    <td>{{ prestito['DataRestituzione'] if prestito['DataRestituzione'] else '-' }}</td>
                     <td>
                         {% if prestito[4] %}
                             <span class="badge badge-success">Restituito</span>

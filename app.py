@@ -28,7 +28,7 @@ Session(app)
 @app.route("/")
 def home():
     if session.get("isFirstLogin"):
-        session["isFirstLogin"] = getCredenziali(mysql, session["username"])[-1]
+        session["isFirstLogin"] = getCredenziali(mysql, session["username"])['firstLogin']
     return render_template("home.html", titolo ="Home")
 
 
@@ -51,13 +51,13 @@ def login():
             return redirect(url_for("login"))
         
         else: 
-            hash = account[3]
+            hash = account["Password"]
             if check_password_hash(hash, pw) == False:
                 flash("La password inserita non è corretta")
                 return redirect(url_for("login"))
         session["username"] = user
-        session["userType"] = account[6]
-        session["isFirstLogin"] = account[-1]
+        session["userType"] = account["Tipo"]
+        session["isFirstLogin"] = account["firstLogin"]
         
         return redirect(url_for("home"))
     
@@ -89,8 +89,8 @@ def register():
         
         user = nome+cognome
         
-        sameNameUsers = getSameNameUsers(mysql, nome,cognome)[0]
-        if sameNameUsers>0:
+        sameNameUsers = getSameNameUsers(mysql, nome,cognome)
+        if len(sameNameUsers)>0 and sameNameUsers[0]>0:
             user+=str(sameNameUsers)
         
         insertUser(mysql, user, nome, cognome, pw, data, email, tipo)
@@ -163,7 +163,7 @@ def addLibro():
     
     if mod == "":
         session["ISBN"] = ISBN
-        if getLibro(mysql, ISBN):
+        if len(getLibro(mysql, ISBN))>0:
             session["book"] = "esiste"
             
         else:
@@ -212,7 +212,7 @@ def addLibro():
             if check_A == None:
                 insertAutore(mysql, nome_autore, cognome_autore)
 
-            id_autore = getAutore(mysql, nome_autore, cognome_autore)[0]
+            id_autore = getAutore(mysql, nome_autore, cognome_autore)
             insertComitato(mysql, id_autore, ISBN)
                 
 
@@ -238,16 +238,16 @@ def addPrestito():
         return redirect(url_for("bibliotecario"))
     
     user_info = getCredenziali(mysql, username)
-    if not user_info:
+    if len(user_info)<1:
         flash("L'username specificato non esiste.")
         return redirect(url_for("bibliotecario"))
     
     copy_info = getCopia(mysql, codicecopia)
-    if not copy_info:
+    if len(copy_info)<1:
         flash("Il codice copia specificato non esiste.")
         return redirect(url_for("bibliotecario"))
     
-    if not copiaDisponibile(mysql, codicecopia)[0]:
+    if not copiaDisponibile(mysql, codicecopia)['isDisponibile']:
         flash("La copia non è disponibile per il prestito.")
         return redirect(url_for("bibliotecario"))
     
@@ -270,10 +270,10 @@ def editPrestito():
         flash("Inserire codice copia")
         return redirect(url_for("bibliotecario"))
     
-    if not getCopia(mysql, codicecopia):
+    if len(getCopia(mysql, codicecopia))<1:
         flash("Copia inesistente")
         return redirect(url_for("bibliotecario")) 
-    if copiaDisponibile(mysql, codicecopia)[0]:
+    if copiaDisponibile(mysql, codicecopia)['isDisponibile']:
         flash("La copia è già disponibile")
         return redirect(url_for("bibliotecario"))
     
@@ -290,20 +290,9 @@ def libro(isbn):
         abort(404, description="Libro non trovato")
 
     updateLibroStats(mysql, isbn)
-
+    print(book_data)
     riassunti = getRiassuntiByLibro(mysql, isbn)
-
-    book = {
-        "title": book_data[0][0],
-        "authors": [a[1] for a in book_data],
-        "genre": book_data[0][2],
-        "year": book_data[0][3],
-        "isbn": book_data[0][4],
-        "nricerche":book_data[0][5],
-        "cover_url": f"https://covers.openlibrary.org/b/isbn/{book_data[0][4]}-L.jpg"
-    }
-
-    return render_template("libro.html", book=book, riassunti=riassunti)
+    return render_template("libro.html", book=book_data[0], riassunti=riassunti)
 
 @app.route("/user/")
 def userData():
@@ -311,22 +300,13 @@ def userData():
         # Admin View: Fetch All Users
         user_list = getUserList(mysql)
         return render_template("user.html",user_list=user_list)
-        
+    
     username = session.get("username")
     if username:
-        user_data = getAnagrafica(mysql, username )
-        user = {
-            "nome": user_data[0],
-            "cognome": user_data[1],
-            "email": user_data[2],
-            "data_nascita": user_data[3],
-        }
-
-    
         prestiti = getPrestitiByUsername(mysql,username)
-
+        user = getAnagrafica(mysql, username)
         riassunti = getRiassuntiByUsername(mysql, username)
-        return render_template("user.html", user=user, prestiti=prestiti, riassunti=riassunti)
+        return render_template("user.html" ,user=user, prestiti=prestiti, riassunti=riassunti)
     abort(403)
 
 @app.route("/user/<username>")
@@ -337,23 +317,14 @@ def adminUsers(username):
             # Fetch Selected User's Info
             user_list= getUserList(mysql)
             user_data = getAnagrafica(mysql, username)
-            
-            selected_user = {
-                "nome": user_data[0],
-                "cognome": user_data[1],
-                "email": user_data[2],
-                "data_nascita": user_data[3],
-            }
-
-            
-        
+   
             prestiti = getPrestitiByUsername(mysql, username)
 
             riassunti = getRiassuntiByUsername(mysql, username)
 
         
         return render_template(
-            "user.html", user_list=user_list, selected_user=selected_user, prestiti=prestiti, riassunti=riassunti
+            "user.html", user_list=user_list, selected_user=user_data, prestiti=prestiti, riassunti=riassunti
         )
     else:
         abort(403)
@@ -382,19 +353,9 @@ def catalogo():
 
     
     book_data = getLibri(mysql,keyword,sort)
-    books = []
-    
-    for b in book_data:
-        books.append({
-            "titolo": b[0],
-            "autori": b[1],
-            "genere": b[2],
-            "isbn": b[4],
-            "cover_url": f"https://covers.openlibrary.org/b/isbn/{b[4]}-L.jpg",
-            "disponibile": len(isDisponibile(mysql, b[4]))
-        })
+
     # Render the catalog template with the fetched books
-    return render_template("catalogo.html", books=books)
+    return render_template("catalogo.html", books=book_data, isDisponibile=isDisponibile, mysql=mysql)
 
 
 

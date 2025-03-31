@@ -11,10 +11,10 @@
                 <h3 class="text-center mb-4" style="color: #81A1C1;">Elenco Utenti</h3>
                 <div class="list-group">
                     {% for user in user_list %}
-                    <a href="/user/{{ user[0] }}" class="list-group-item list-group-item-action" style="background-color: #4C566A; color: #ECEFF4;">
+                    <a href="/user/{{ user['Username'] }}" class="list-group-item list-group-item-action" style="background-color: #4C566A; color: #ECEFF4;">
                         <div class="d-flex justify-content-between align-items-center">
-                            <span><strong>{{ user[0] }}</strong></span>
-                            <span style="font-size: 0.9em; color: #81A1C1;">{{ user[3] }}</span>
+                            <span><strong>{{ user['Username'] }}</strong></span>
+                            <span style="font-size: 0.9em; color: #81A1C1;">{{ user['Email'] }}</span>
                         </div>
                     </a>
                     {% endfor %}
@@ -27,10 +27,10 @@
                 <h3>Dettagli Utente</h3>
                 <div class="card" style="background-color: #3B4252; color: #ECEFF4;">
                     <div class="card-body">
-                        <p><strong>Nome:</strong> {{ selected_user.nome }}</p>
-                        <p><strong>Cognome:</strong> {{ selected_user.cognome }}</p>
-                        <p><strong>Email:</strong> {{ selected_user.email }}</p>
-                        <p><strong>Data di Nascita:</strong> {{ selected_user.data_nascita }}</p>
+                        <p><strong>Nome:</strong> {{ selected_user["Nome"] }}</p>
+                        <p><strong>Cognome:</strong> {{ selected_user["Cognome"] }}</p>
+                        <p><strong>Email:</strong> {{ selected_user["Email"] }}</p>
+                        <p><strong>Data di Nascita:</strong> {{ selected_user["DataNascita"] }}</p>
                     </div>
                 </div>
 
@@ -46,9 +46,9 @@
                     <tbody>
                         {% for prestito in prestiti %}
                         <tr>
-                            <td><a href="{{url_for('libro', isbn=prestito[1])}}">{{prestito[0]}}</a></td>
-                            <td>{{ prestito[2] }}</td>
-                            <td>{{ prestito[3] or "Non restituito" }}</td>
+                            <td><a href="{{url_for('libro', isbn=prestito['ISBN'])}}">{{prestito['ISBN']}}</a></td>
+                            <td>{{ prestito['DataInizio'] }}</td>
+                            <td>{{ prestito['DataRestituzione'] or "Non restituito" }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -74,10 +74,10 @@
                 <h3>Il Tuo Profilo</h3>
                 <div class="card" style="background-color: #3B4252; color: #ECEFF4;">
                     <div class="card-body">
-                        <p><strong>Nome:</strong> {{ user.nome }}</p>
-                        <p><strong>Cognome:</strong> {{ user.cognome }}</p>
-                        <p><strong>Email:</strong> {{ user.email }}</p>
-                        <p><strong>Data di Nascita:</strong> {{ user.data_nascita }}</p>
+                        <p><strong>Nome:</strong> {{ user['Nome'] }}</p>
+                        <p><strong>Cognome:</strong> {{ user['Cognome'] }}</p>
+                        <p><strong>Email:</strong> {{ user['Email'] }}</p>
+                        <p><strong>Data di Nascita:</strong> {{ user["DataNascita"] }}</p>
                     </div>
                 </div>
             </div>
@@ -96,9 +96,9 @@
                     <tbody>
                         {% for prestito in prestiti %}
                         <tr>
-                            <td><a href="{{url_for('libro', isbn=prestito[1])}}">{{prestito[0]}}</a></td>
-                            <td>{{ prestito[2] }}</td>
-                            <td>{{ prestito[3] or "Non restituito" }}</td>
+                            <td><a href="{{url_for('libro', isbn=prestito['ISBN'])}}">{{prestito['Titolo']}}</a></td>
+                            <td>{{ prestito['DataInizio'] }}</td>
+                            <td>{{ prestito['DataRestituzione'] or "Non restituito" }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -109,7 +109,7 @@
                 <ul class="list-group">
                     {% for riassunto in riassunti %}
                     <li class="list-group-item" style="background-color: #4C566A; color: #ECEFF4;">
-                        <strong>{{ riassunto[0] }}</strong>: {{ riassunto[1] }}
+                        <strong>{{ riassunto['Titolo'] }}</strong>: {{ riassunto['Contenuto'] }}
                     </li>
                     {% endfor %}
                 </ul>
