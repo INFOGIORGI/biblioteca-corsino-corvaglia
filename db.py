@@ -74,22 +74,21 @@ def getLibri(mysql, keyword=None, sort="Titolo"):
         INNER JOIN AUTORE ON COMITATO_DI_SCRITTURA.ID_A = AUTORE.ID_A
     """
     where = ""
-    params = ()
     if keyword:
-        keyword_param = "%" + keyword.lower() + "%"
+        keyword = "%" + keyword.lower() + "%"
         where = """ WHERE LOWER(LIBRO.Titolo) LIKE %s
             OR LOWER(AUTORE.Nome) LIKE %s
             OR LOWER(AUTORE.Cognome) LIKE %s
             OR LOWER(LIBRO.Genere) LIKE %s"""
-        params = (keyword_param, keyword_param, keyword_param, keyword_param)
     
     valori_consentiti = ["Titolo", "Genere", "Autori"]
     if sort not in valori_consentiti:
         sort = "Titolo"
     
-    query = query_base + where + " GROUP BY Titolo, Genere, AnnoPub, LIBRO.ISBN, LIBRO.nricerche ORDER BY " + sort   
-    if params:
-        cursor.execute(query, params)
+    query = query_base + where + " GROUP BY Titolo, Genere, AnnoPub, LIBRO.ISBN, LIBRO.nricerche ORDER BY " + sort
+    print(query)   
+    if keyword:
+        cursor.execute(query, (keyword, keyword, keyword, keyword))
     else:
         cursor.execute(query)
     
