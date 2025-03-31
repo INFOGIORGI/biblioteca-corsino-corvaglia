@@ -109,7 +109,7 @@ def register():
 @app.route("/updatePassword/", methods=["POST", "GET"])
 def updatePasword():
     if request.method == "POST":
-        if not session["isFirstLogin"]:
+        if not session["isFirstLogin"]: 
             flash("Non è il primo login")
             return redirect(url_for("home"))
         password = request.form.get("password","")
@@ -150,8 +150,8 @@ def admin():
 def bibliotecario():
     if session.get("userType") == "bibliotecario":
         #servono per l'add libro, il frontend si comporta diversamente in base a come sono settati
-        book = session.pop("book", None)  # Remove from session after retrieving
-        ISBN = session.pop("ISBN", None)  # Remove from session after retrieving
+        book = session.pop("book", None) 
+        ISBN = session.pop("ISBN", None)  
         
         copie = getCopie(mysql)
         prestiti = getPrestiti(mysql)
@@ -219,12 +219,12 @@ def addLibro():
         insertLibro(mysql, ISBN, titolo, anno_pubbl, genere)    
         
         autori = autore.split(",")
-        for a in autori:                                                #Scorrendo gli autori, otteniamo nome e cognome, poi verifichiamo se sono già presenti nel db
-            autore = a.split(" ")                                  # altrimenti li aggiungiamo. Poi eseguo un altra query per ottenere l'id del'autore, e lo
-            cognome_autore = autore[-1]                                 # colleghiamo al libro in comitato
+        for a in autori:                                #Scorrendo gli autori, otteniamo nome e cognome, poi verifichiamo se sono già presenti nel db
+            autore = a.split(" ")                       # altrimenti li aggiungiamo. Poi eseguo un altra query per ottenere l'id del'autore, e lo
+            cognome_autore = autore[-1]                 # colleghiamo al libro in comitato
             nome_autore = " ".join(autore[:-1])
            
-            check_A = getAutore(mysql, nome_autore, cognome_autore)
+            check_A = getAutore(mysql, nome_autore, cognome_autore)   #Inserisce l'autore in tabella autore
             if check_A == None:
                 insertAutore(mysql, nome_autore, cognome_autore)
 
@@ -248,12 +248,14 @@ def addPrestito():
     
     username = request.form.get("username", "").strip()
     codicecopia = request.form.get("codicecopia", "").strip()
+    dataInizio = date.today()
     
     if not (username and codicecopia):
         flash("Tutti i campi devono essere completi per aggiungere un prestito.")
         return redirect(url_for("bibliotecario"))
     
-    if len(getPrestitiDuplicati(mysql, codicecopia, username, date.today()))>0:
+    prestitiDuplicati = getPrestitiDuplicati(mysql, codicecopia, username, dataInizio)
+    if len(prestitiDuplicati)>0:
         flash("Non puoi prendere in prestito lo stesso libro nella stessa data")
         return redirect(url_for("bibliotecario"))
         
@@ -272,7 +274,7 @@ def addPrestito():
         flash("La copia non è disponibile per il prestito.")
         return redirect(url_for("bibliotecario"))
     
-    dataInizio = date.today()
+    
     insertPrestito(mysql, username, codicecopia, dataInizio)
     flash("Prestito aggiunto con successo.")
     
@@ -310,7 +312,7 @@ def libro(isbn):
     if not book_data:
         abort(404, description="Libro non trovato")
 
-    updateLibroStats(mysql, isbn)
+    updateLibroStats(mysql, isbn)  #Ogni volta che la pagina libro viene aperta, il counter ricerche si aggiorna
     print(book_data)
     riassunti = getRiassuntiByLibro(mysql, isbn)
     return render_template("libro.html", book=book_data[0], riassunti=riassunti)
@@ -318,7 +320,7 @@ def libro(isbn):
 @app.route("/user/")
 def userData():
     if session.get("userType") == "admin":
-        user_list = getUserList(mysql)
+        user_list = getUserList(mysql)    #Restituisce la lista di tutti gli utenti nella schermata Admin
         return render_template("user.html",user_list=user_list)
     
     username = session.get("username")
@@ -331,7 +333,7 @@ def userData():
 
 @app.route("/user/<username>")
 def adminUsers(username):
-    if session.get("userType") == "admin":
+    if session.get("userType") == "admin":  #Vediamo le info degli utenti solo se siamo admin
         
         if username:
             
