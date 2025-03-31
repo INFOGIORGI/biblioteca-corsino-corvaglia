@@ -66,7 +66,7 @@ def login():
 @app.route("/register/", methods = ["GET","POST"])
 def register():
     if request.method == "GET":
-        if session["userType"] == "utente":  
+        if session.get("userType") == "utente" or session.get("userType")==None:  
             abort(403)
         else: 
             return render_template("register.html")
@@ -76,9 +76,9 @@ def register():
         data = request.form.get("data")
         email = request.form.get("email")
         #l'admin registra utenti di tipo bibliotecario e il bibliotecario utenti normali
-        if session["userType"] == "admin":  
+        if session.get("userType") == "admin":  
              tipo = "bibliotecario"
-        elif session["userType"] == "bibliotecario":
+        elif session.get("userType") == "bibliotecario":
             tipo = "utente"
     
         if nome == "" or cognome == "" or data == "" or email =="":
