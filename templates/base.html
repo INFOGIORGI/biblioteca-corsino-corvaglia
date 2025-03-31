@@ -71,6 +71,10 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/bibliotecario/">Area Riservata</a>
                 </li>
+                {%elif session['userType']=="admin"%}
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/">Admin Dashboard</a>
+                </li>
                 {%endif%}
                 <li class="nav-item">
                     <a class="nav-link" href="/catalogo/">Catalogo</a>

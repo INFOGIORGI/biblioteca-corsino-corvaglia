@@ -137,10 +137,10 @@ def copiaDisponibile(mysql, codicecopia):
     cursor = mysql.connection.cursor()
     query = "SELECT isDisponibile FROM CATALOGO WHERE ID_C = %s"
     cursor.execute(query, (codicecopia,))
-    row = cursor.fetchone()
     columns = [desc[0] for desc in cursor.description] if cursor.description else []
+    result = [dict(zip(columns, row)) for row in cursor.fetchall()]
     cursor.close()
-    return
+    return result[0]
 
 def insertPrestito(mysql, username, codicecopia, dataInizio):
     cursor = mysql.connection.cursor()
@@ -178,6 +178,20 @@ def getPrestitiByUsername(mysql, username):
     result = [dict(zip(columns, row)) for row in cursor.fetchall()]
     cursor.close()
     return result
+
+def getPrestitiDuplicati(mysql, codiceCopia, username, dataInizio):
+    cursor = mysql.connection.cursor()
+    query = """
+        SELECT Username, ID_C, DataInizio
+        FROM PRESTITO
+        WHERE Username = %s AND ID_C = %s AND DataInizio = %s
+    """
+    cursor.execute(query, (username,codiceCopia, dataInizio))
+    columns = [desc[0] for desc in cursor.description] if cursor.description else []
+    result = [dict(zip(columns, row)) for row in cursor.fetchall()]
+    cursor.close()
+    return result
+
 
 def updatePrestito(mysql, codicecopia, datafine):
     cursor = mysql.connection.cursor()

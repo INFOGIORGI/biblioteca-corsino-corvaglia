@@ -4,6 +4,7 @@ from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, date
 from db import *
+import re
 app = Flask(__name__)
 
 #Configurazione credenziali DB
@@ -46,7 +47,7 @@ def login():
             return redirect(url_for("login"))
 
         account = getCredenziali(mysql,user)
-        if account == None:
+        if len(account)<1:
             flash("L'account non esiste")
             return redirect(url_for("login"))
         
@@ -83,6 +84,14 @@ def register():
         if nome == "" or cognome == "" or data == "" or email =="":
             flash("Tutti i campi devono essere completi")
             return redirect(url_for("register"))
+
+        def is_valid_email(email):
+            pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+            return re.match(pattern, email) is not None
+        
+        if  is_valid_email(email)==False:
+            flash("La mail non è nel formato corretto (mail@example.com)")
+            return redirect(url_for("register"))
         
         genPwd = nome.lower() + cognome.lower() + data.lower() #formata da nome, data di nascita, cognome (es. AlbertoCorvaglia2006-08-20)
         pw = generate_password_hash(genPwd)
@@ -108,6 +117,13 @@ def updatePasword():
         if password == "" or password_confirm == "":
                 flash("Tutti i campi devono essere completi")
                 return redirect(url_for("updatePasword"))
+            
+        if len(password) < 8:
+            flash("La password deve contenere almeno 8 caratteri")
+            return redirect(url_for("updatePassword"))
+        
+        
+
         if password_confirm != password:
             flash("Le password non corrispondono")
             return redirect(url_for("updatePasword"))
@@ -237,6 +253,11 @@ def addPrestito():
         flash("Tutti i campi devono essere completi per aggiungere un prestito.")
         return redirect(url_for("bibliotecario"))
     
+    if len(getPrestitiDuplicati(mysql, codicecopia, username, date.today()))>0:
+        flash("Non puoi prendere in prestito lo stesso libro nella stessa data")
+        return redirect(url_for("bibliotecario"))
+        
+    
     user_info = getCredenziali(mysql, username)
     if len(user_info)<1:
         flash("L'username specificato non esiste.")
@@ -304,9 +325,9 @@ def userData():
     username = session.get("username")
     if username:
         prestiti = getPrestitiByUsername(mysql,username)
-        user = getAnagrafica(mysql, username)
+        user_data = getAnagrafica(mysql, username)
         riassunti = getRiassuntiByUsername(mysql, username)
-        return render_template("user.html" ,user=user, prestiti=prestiti, riassunti=riassunti)
+        return render_template("user.html" ,user=user_data, prestiti=prestiti, riassunti=riassunti)
     abort(403)
 
 @app.route("/user/<username>")
@@ -314,18 +335,22 @@ def adminUsers(username):
     if session.get("userType") == "admin":
         
         if username:
+            
+            if len(getCredenziali(mysql,username))<1:
+                abort(404,"Utente non esistente")
+            
             # Fetch Selected User's Info
             user_list= getUserList(mysql)
             user_data = getAnagrafica(mysql, username)
-   
+
             prestiti = getPrestitiByUsername(mysql, username)
 
             riassunti = getRiassuntiByUsername(mysql, username)
 
         
-        return render_template(
-            "user.html", user_list=user_list, selected_user=user_data, prestiti=prestiti, riassunti=riassunti
-        )
+            return render_template(
+                "user.html", user_list=user_list, user=user_data, prestiti=prestiti, riassunti=riassunti
+            )
     else:
         abort(403)
 
@@ -366,3 +391,6 @@ def logout():
 
 
 app.run(debug=True)
+
+
+

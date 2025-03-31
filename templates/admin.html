@@ -38,16 +38,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {%for u in users%}
-                        <tr>
-                            <td>{{u['Username']}}</td>
-                            <td>{{u['Nome']}}</td>
-                            <td>{{u['Cognome']}}</td>
-                            <td>{{u['DataNascita']}}</td>
-                            <td>{{u['Email']}}</td>
+                        {% for u in users %}
+                        <tr onclick="window.location.href='/user/{{u['Username']}}'" style="cursor: pointer;">
+                            <td>{{ u['Username'] }}</td>
+                            <td>{{ u['Nome'] }}</td>
+                            <td>{{ u['Cognome'] }}</td>
+                            <td>{{ u['DataNascita'] }}</td>
+                            <td>{{ u['Email'] }}</td>
                         </tr>
-                        {%endfor%}
+                        {% endfor %}
                     </tbody>
+                    
                 </table>
             </div>
         </div>

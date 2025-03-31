@@ -222,10 +222,13 @@
         </div>
     </div>
 
-    <!-- Books Table -->
+    <!-- Books Table with Filter -->
     <h2 class="text-center mt-5" style="color: #88C0D0;">Lista Libri</h2>
+    <div class="mb-3">
+        <input type="text" id="booksFilter" class="form-control" placeholder="Filtra libri...">
+    </div>
     <div class="table-responsive">
-        <table class="table table-dark table-striped table-hover text-center">
+        <table id="libriTable" class="table table-dark table-striped table-hover text-center">
             <thead class="thead-light">
                 <tr>
                     <th scope="col">Titolo</th>
@@ -241,8 +244,16 @@
             <tbody>
                 {% for libro in copie %}
                 <tr>
-                    <td>{{ libro['Titolo'] }}</td>
-                    <td>{{ libro['ISBN'] }}</td>
+                    <td>
+                        <a href="{{ url_for('libro', isbn=libro['ISBN']) }}" style="color: inherit; text-decoration: none;">
+                            {{ libro['Titolo'] }}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{{ url_for('libro', isbn=libro['ISBN']) }}" style="color: inherit; text-decoration: none;">
+                            {{ libro['ISBN'] }}
+                        </a>
+                    </td>
                     <td>{{ libro['Autori'] }}</td>
                     <td>{{ libro['AnnoPub'] }}</td>
                     <td>{{ libro['Genere'] }}</td>
@@ -265,10 +276,17 @@
         </table>
     </div>
 
-    <!-- Prestiti Table -->
-    <h2 class="text-center mt-5" style="color: #88C0D0;">Prestiti Attivi</h2>
+    <h2 class="text-center mt-5" style="color: #88C0D0;">Storico Prestiti</h2>
+    <div class="mb-3 row">
+        <div class="col-md-6">
+            <input type="text" id="usernameFilter" class="form-control" placeholder="Filtra per username...">
+        </div>
+        <div class="col-md-6">
+            <input type="text" id="dateFilter" class="form-control" placeholder="Filtra per data...">
+        </div>
+    </div>
     <div class="table-responsive">
-        <table class="table table-dark table-striped table-hover text-center">
+        <table id="prestitiTable" class="table table-dark table-striped table-hover text-center">
             <thead class="thead-light">
                 <tr>
                     <th scope="col">Username</th>
@@ -282,17 +300,28 @@
             <tbody>
                 {% for prestito in prestiti %}
                 <tr>
-                    <td>{{ prestito['username'] }}</td>
-                    <td>{{ prestito['ISBN'] }}</td>
+                    <td>
+                        <a href="{{ url_for('userData', username=prestito['username']) }}" style="color: inherit; text-decoration: none;">
+                            {{ prestito['username'] }}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{{ url_for('libro', isbn=prestito['ISBN']) }}" style="color: inherit; text-decoration: none;">
+                            {{ prestito['ISBN'] }}
+                        </a>
+                    </td>
                     <td>{{ prestito['ID_C'] }}</td>
                     <td>{{ prestito['DataInizio'] }}</td>
                     <td>{{ prestito['DataRestituzione'] if prestito['DataRestituzione'] else '-' }}</td>
                     <td>
-                        {% if prestito[4] %}
-                            <span class="badge badge-success">Restituito</span>
-                        {% else %}
-                            <span class="badge badge-warning">In prestito</span>
-                        {% endif %}
+                        <form action="{{ url_for('editPrestito') }}" method="post">
+                            <input type="hidden" name="codicecopia" value="{{ prestito['ID_C'] }}">
+                            {% if prestito['DataRestituzione'] %}
+                                <span class="badge badge-success">Restituito</span>
+                            {% else %}
+                                <button type="submit" class="btn btn-sm btn-warning">In prestito</button>
+                            {% endif %}
+                        </form>
                     </td>
                 </tr>
                 {% else %}
